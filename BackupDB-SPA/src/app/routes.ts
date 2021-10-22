@@ -10,7 +10,7 @@ export const appRoutes: Routes = [
         runGuardsAndResolvers: 'always',
         canActivate: [AuthGuard],
         children: [
-            {path: 'Servers', component: ServerListComponent},
+            {path: 'servers', component: ServerListComponent},
         ]
     },
     {path: '**', redirectTo: 'home', pathMatch: 'full'},
