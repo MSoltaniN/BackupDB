@@ -1,7 +1,10 @@
 import {Routes} from '@angular/router';
 import { HomeComponent } from './home/home.component';
+//import { DatabaseListComponent } from './server-list/database-list/database-list.component';
 import { ServerListComponent } from './server-list/server-list.component';
 import { AuthGuard } from './_guards/auth.guard';
+//import { DatabaseListResolver } from './_resolvers/database-list.resolver';
+import { ServerListResolver } from './_resolvers/server-list.resolver';
 
 export const appRoutes: Routes = [
     {path: 'home', component: HomeComponent},
@@ -10,7 +13,8 @@ export const appRoutes: Routes = [
         runGuardsAndResolvers: 'always',
         canActivate: [AuthGuard],
         children: [
-            {path: 'servers', component: ServerListComponent},
+            {path: 'BackUp/servers', component: ServerListComponent , resolve: { Servers: ServerListResolver} },
+           // {path: 'databases', component: DatabaseListComponent , resolve: { Databases: DatabaseListResolver} },
         ]
     },
     {path: '**', redirectTo: 'home', pathMatch: 'full'},

@@ -23,7 +23,7 @@ export class NavComponent implements OnInit {
     }, error => {
       this.alertify.error(error);
     }, () => {
-      this.router.navigate(['/servers']);
+      this.router.navigate(['/BackUp/servers']);
     });
   }
 

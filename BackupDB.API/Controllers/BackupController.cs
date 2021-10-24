@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using DatingApp.API.Data;
@@ -32,7 +34,7 @@ namespace BackupDB.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet]
+        [HttpGet("Servers")]
         public async Task<IActionResult> GetServers()
         {
             // -------------    get from registry  -------------
@@ -42,24 +44,37 @@ namespace BackupDB.API.Controllers
             // foreach (string sqlserver in key.GetValueNames())
             //     l.Add(string.Format("{0}\\{1}", Environment.MachineName, sqlserver));
 
-            var command = "OSQL -L";
-            System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
-            procStartInfo.RedirectStandardOutput = true;
-            procStartInfo.UseShellExecute = false;
-            procStartInfo.WorkingDirectory = @"C:\";
-            procStartInfo.CreateNoWindow = true; //whether you want to display the command window
-            System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            proc.StartInfo = procStartInfo;
-            proc.Start();
-            string result = proc.StandardOutput.ReadToEnd();
+            //var command = "OSQL -L";
+            // string command = @"Get-Service | ?{ $_.DisplayName -like ""SQL Server*"" } | ?{ $_.Name -like ""MSSQL*"" }";
+            // //Regex.Replace(command, @"(\d+\/\d+)""", "$1\\\"");
+            // Debug.WriteLine(command);
+            // await  System.IO.File.WriteAllTextAsync("c:/a/a.txt", command);
+            // System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
+            // procStartInfo.RedirectStandardOutput = true;
+            // procStartInfo.UseShellExecute = false;
+            // procStartInfo.WorkingDirectory = @"C:\";
+            // procStartInfo.CreateNoWindow = true; //whether you want to display the command window
+            // System.Diagnostics.Process proc = new System.Diagnostics.Process();
+            // proc.StartInfo = procStartInfo;
+            // proc.Start();
+            // string result = proc.StandardOutput.ReadToEnd();
 
-            string[] s = result.Trim().Replace(" ", "").Split("\r\n");
+            // //string[] s = result.Trim().Replace(" ", "").Split("\r\n");
+            // string[] s = result.Trim().Replace(" ", "").Split("\r\n");
+            // List<string> s2 = new List<string>();
+            // foreach (var item in s)
+            // {
+            //     s2.Add(item.Substring(item.IndexOf("("),item.IndexOf(")")));
+            // }
+            List<string> j = new List<string>();
 
-            return Ok(s);
+            var values = new Dictionary<string,string> { {"serverName", "DESKTOP-3ISN91B\\MSSQLSERVER2"} };
+
+            return Ok(values);
         }
 
         [AllowAnonymous]
-        [HttpPost("GetDataBases")]
+        [HttpPost("DataBases")]
         public async Task<IActionResult> GetDataBases([FromBody]ServerNameDto serverNameDto)
         {
             List<string> queryResult = new List<string>();
