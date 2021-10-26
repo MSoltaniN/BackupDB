@@ -1,10 +1,25 @@
 <div class="container mt-5">
   <div class="row">
     <div *ngFor="let server of servers" class="col-lg-2 col-md-3 col-sm-6">
-      <a class="dropdown-toggle text-light" dropdownToggle>
+      <li class="dropdown-toggle text-light " dropdownToggle>
         {{server }}  نام سرور: 
-      </a>
+      </li>
       <!-- <app-database-list [server]="server"></app-database-list> -->
     </div>
   </div>
 </div>
+
+<accordion >
+  <accordion-group heading="Static Header">
+    This content is straight in the template.
+  </accordion-group>
+  <accordion-group heading="Another group">
+    <p>Some content</p>
+  </accordion-group>
+  <accordion-group heading="Another group">
+    <p>Some content</p>
+  </accordion-group>
+  <accordion-group heading="Another group">
+    <p>Some content</p>
+  </accordion-group>
+</accordion>

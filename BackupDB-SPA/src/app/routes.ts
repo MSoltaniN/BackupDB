@@ -13,7 +13,7 @@ export const appRoutes: Routes = [
         runGuardsAndResolvers: 'always',
         canActivate: [AuthGuard],
         children: [
-            {path: 'BackUp/servers', component: ServerListComponent , resolve: { Servers: ServerListResolver} },
+            {path: 'api/BackUp/servers', component: ServerListComponent/*  , resolve: { servers: ServerListResolver} */ },
            // {path: 'databases', component: DatabaseListComponent , resolve: { Databases: DatabaseListResolver} },
         ]
     },

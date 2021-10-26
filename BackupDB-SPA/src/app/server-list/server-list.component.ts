@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Server } from '../_models/server';
@@ -11,16 +12,22 @@ import { ServerService } from '../_services/server.service';
 })
 export class ServerListComponent implements OnInit {
   servers: Server[];
+  values: any;
 
   constructor(private userService: ServerService, private alertify: AlertifyService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute ,private http: HttpClient) { }
 
   ngOnInit() {
-    this.route.data.subscribe(data => {
-      this.servers = data['servers'];
+    // this.route.data.subscribe(data => {
+    //   this.servers = data['server'];
+    // });
+
+    this.http.get<Server[]>('http://localhost:5051/api/BackUp/servers').subscribe(response => {
+      this.servers = response;
+      console.log(this.servers);
+    }, error => {
+      console.log(error);
     });
-    console.log("server-list.component" );
-    console.log( this.servers );
   }
 
 }

@@ -38,12 +38,13 @@ namespace BackupDB.API.Controllers
         public async Task<IActionResult> GetServers()
         {
             // -------------    get from registry  -------------
-            // var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-            // var key = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL");
-            // List<string> l = new List<string>();
-            // foreach (string sqlserver in key.GetValueNames())
-            //     l.Add(string.Format("{0}\\{1}", Environment.MachineName, sqlserver));
+            var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+            var key = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL");
+            List<string> localServers = new List<string>();
+            foreach (string sqlserver in key.GetValueNames())
+                localServers.Add(string.Format("{0}\\{1}", Environment.MachineName, sqlserver));
 
+            //---------------  get from commands ------------------
             //var command = "OSQL -L";
             // string command = @"Get-Service | ?{ $_.DisplayName -like ""SQL Server*"" } | ?{ $_.Name -like ""MSSQL*"" }";
             // //Regex.Replace(command, @"(\d+\/\d+)""", "$1\\\"");
@@ -66,11 +67,8 @@ namespace BackupDB.API.Controllers
             // {
             //     s2.Add(item.Substring(item.IndexOf("("),item.IndexOf(")")));
             // }
-            List<string> j = new List<string>();
 
-            var values = new Dictionary<string,string> { {"serverName", "DESKTOP-3ISN91B\\MSSQLSERVER2"} };
-
-            return Ok(values);
+            return Ok(localServers);
         }
 
         [AllowAnonymous]

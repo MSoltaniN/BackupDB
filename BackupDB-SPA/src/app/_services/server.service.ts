@@ -21,9 +21,8 @@ export class ServerService {
 constructor(private http: HttpClient) { }
 
 getServers() {
-  console.log("ServerService" );
-  this.http.get(this.baseUrl + 'BackUp/servers').subscribe(res => {this.result = res}, error => {  console.log(error) });
-  console.log(this.result);
+  this.http.get<Server[]>(this.baseUrl + 'BackUp/servers',httpOptions).subscribe(res => {this.result = res}, error => {  console.log(error) });
+  //console.log(this.result);
   return this.result;
 }
 

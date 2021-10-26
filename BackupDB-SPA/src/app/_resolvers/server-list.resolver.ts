@@ -12,6 +12,12 @@ export class ServerListResolver implements Resolve<Server[]> {
         private alertify: AlertifyService) {}
 
     resolve(route: ActivatedRouteSnapshot): Observable<Server[]> {
-        return this.serverService.getServers();
+        return this.serverService.getServers().pipe(
+            catchError(error => {
+                this.alertify.error('Problem retrieving data');
+                this.router.navigate(['/home']);
+                return of(null);
+            })
+        );
     }
 }
