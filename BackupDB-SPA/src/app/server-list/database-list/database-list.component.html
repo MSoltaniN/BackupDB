@@ -1,3 +1,21 @@
-<p>
-  database-list works!
-</p>
+<div class="card mb-4">
+  <div class="card-img-wrapper">
+    <img class="card-img-top" src="assets/img/DB.jpg" style="opacity: 0.5">
+    <ul class="list-inline member-icons animate text-center">
+      <li class="list-inline-item"><button class="btn btn-primary" 
+          [routerLink]="['api/backup/databases/details', database.database_name]"><i class="fa fa-info"></i></button></li>
+      <li class="list-inline-item"><button class="btn btn-primary" (click)="backup(database)"><i class="fa fa-clone"></i></button></li>
+      <li class="list-inline-item"><button class="btn btn-primary"><i class="fa fa-bookmark"></i></button></li>
+    </ul>
+  </div>
+  <div class="card-body p-1">
+    <p class="card-title text-center mb-1"><i class="fa fa-user"></i>
+      {{database.database_name}}  
+    </p>
+    <p class="card-title text-center mb-1">
+      {{database.backup_size}} حجم فایل {{database.description}}
+    </p>
+    <p class="card-text text-width-15 text-muted text-center">{{database.physical_device_name}} مسیر فایل پشتیبان</p>
+    <p class="card-text text-muted text-center">{{database.backup_finish_date}} تاریخ آخرین پشتیبان گیری</p>
+  </div>
+</div>

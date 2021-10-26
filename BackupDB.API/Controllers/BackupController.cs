@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SqlServer.Management.Smo;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace BackupDB.API.Controllers
 {
@@ -25,6 +26,10 @@ namespace BackupDB.API.Controllers
         private readonly IDatingRepository _repo;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+
+        [JsonProperty("tags")]
+        public List<string> localServers { get; set; }
+
 
         public BackupController(IDatingRepository repo, IMapper mapper,IConfiguration configuration)
         {
@@ -40,9 +45,9 @@ namespace BackupDB.API.Controllers
             // -------------    get from registry  -------------
             var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
             var key = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL");
-            List<string> localServers = new List<string>();
+            List<ServerNameDto> localServers = new List<ServerNameDto>();
             foreach (string sqlserver in key.GetValueNames())
-                localServers.Add(string.Format("{0}\\{1}", Environment.MachineName, sqlserver));
+              localServers.Add(new ServerNameDto{ ServerName = string.Format(@"(local)", Environment.MachineName, sqlserver)} );
 
             //---------------  get from commands ------------------
             //var command = "OSQL -L";
@@ -67,7 +72,6 @@ namespace BackupDB.API.Controllers
             // {
             //     s2.Add(item.Substring(item.IndexOf("("),item.IndexOf(")")));
             // }
-
             return Ok(localServers);
         }
 
@@ -75,7 +79,6 @@ namespace BackupDB.API.Controllers
         [HttpPost("DataBases")]
         public async Task<IActionResult> GetDataBases([FromBody]ServerNameDto serverNameDto)
         {
-            List<string> queryResult = new List<string>();
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
 
             builder.DataSource = serverNameDto.ServerName;
@@ -87,7 +90,9 @@ namespace BackupDB.API.Controllers
             {
                 connection.Open();
 
-                String sql = @"SELECT  
+                String sql = @" SELECT DISTINCT a.*  FROM  (SELECT 
+                             --CONVERT(CHAR(100), SERVERPROPERTY('Servername')) AS Server,    
+                              ROW_NUMBER() OVER (PARTITION BY  msdb.dbo.backupset.database_name ORDER BY msdb.dbo.backupset.backup_finish_date DESC) AS rank,
                            msdb.dbo.backupset.database_name,   
                             msdb.dbo.backupset.backup_start_date,   
                             msdb.dbo.backupset.backup_finish_date,   
@@ -104,10 +109,12 @@ namespace BackupDB.API.Controllers
                             FROM  
                             msdb.dbo.backupmediafamily  
                             INNER JOIN msdb.dbo.backupset ON msdb.dbo.backupmediafamily.media_set_id = msdb.dbo.backupset.media_set_id 
-                            --WHERE    (CONVERT(datetime, msdb.dbo.backupset.backup_start_date, 102) >= GETDATE() - 7)   
-                            ORDER BY  
-                            msdb.dbo.backupset.database_name,   
-                            msdb.dbo.backupset.backup_finish_date ";
+                            ----WHERE    (CONVERT(datetime, msdb.dbo.backupset.backup_start_date, 102) >= GETDATE() - 7)   
+                            --ORDER BY  
+                           -- msdb.dbo.backupset.database_name,   
+                            --msdb.dbo.backupset.backup_finish_date
+                             ) a
+                            WHERE a.rank=1 ";
 
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
@@ -119,6 +126,45 @@ namespace BackupDB.API.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("Process")]
+        public async Task<IActionResult> ProcessBackUpDataBases([FromBody]DBForBackUpProcessDto dbForBackUpProcessDto)
+        {
+            var backupPath = _configuration.GetSection("ServerBackUpInfo:BackUpPath").Value;
+            if(!Directory.Exists(backupPath)) 
+                Directory.CreateDirectory(backupPath);
+
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+            builder.DataSource = dbForBackUpProcessDto.serverName;
+            builder.UserID =  _configuration.GetSection("ServerBackUpInfo:ServerUser").Value;
+            builder.Password =  _configuration.GetSection("ServerBackUpInfo:ServerPass").Value;
+            builder.InitialCatalog = dbForBackUpProcessDto.DBName;
+            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            {
+                connection.Open();
+
+                String sql = string.Format( @" BACKUP DATABASE {0}
+                                                TO DISK = '{1}\{2}-{3}.bak'
+                                                WITH FORMAT,
+                                                    MEDIANAME = 'SQLServerBackups',
+                                                    NAME = 'Full Backup of {4}';
+                                             " 
+                                               , dbForBackUpProcessDto.DBName
+                                               , backupPath
+                                                ,dbForBackUpProcessDto.DBName
+                                                ,System.DateTime.Now.ToString().Trim().Replace("/","").Replace(":","-").Replace(" ","-")
+                                                ,dbForBackUpProcessDto.DBName 
+                                                );
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    using (SqlDataReader reader =  command.ExecuteReader())
+                    {
+                        return Ok(Serialize(reader));
+                    }
+                }
+            }
+        }
         public IEnumerable<Dictionary<string, object>> Serialize(SqlDataReader reader)
         {
             var results = new List<Dictionary<string, object>>();

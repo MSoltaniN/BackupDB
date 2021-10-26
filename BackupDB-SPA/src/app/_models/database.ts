@@ -2,7 +2,7 @@ export interface Database {
     database_name : string ,
     backup_start_date: Date,
     backup_finish_date: Date,
-    expiration_date: null,
+    expiration_date: Date,
     backup_type: string,
     backup_size: number,
     logical_device_name: string,
