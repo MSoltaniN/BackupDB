@@ -1,11 +1,10 @@
 <div class="card mb-4">
   <div class="card-img-wrapper">
     <img class="card-img-top" src="assets/img/DB.jpg" style="opacity: 0.5">
-    <ul class="list-inline member-icons animate text-center">
-      <li class="list-inline-item"><button class="btn btn-primary" 
-          [routerLink]="['api/backup/databases/details', database.database_name]"><i class="fa fa-info"></i></button></li>
-      <li class="list-inline-item"><button class="btn btn-primary" (click)="backup(database)"><i class="fa fa-clone"></i></button></li>
-      <li class="list-inline-item"><button class="btn btn-primary"><i class="fa fa-bookmark"></i></button></li>
+    <ul class="list-inline member-icons animate text-center mt-1">
+      <li class="list-inline-item"><button class="btn btn-primary"  (click)="openDBInfoModal(template)"><i class="fa fa-info"></i></button></li>
+      <li class="list-inline-item"><button class="btn btn-primary d-inline-block" (click)="openDBPath_Confirm_Modal(template2)" tooltip="پشتیبان گیری"><i class="fa fa-hdd-o" data-toggle="tooltip" data-placement="top"></i></button></li>
+      <li class="list-inline-item"><button class="btn btn-primary"><i class="fa fa-bookmark" tooltip ></i></button></li>
     </ul>
   </div>
   <div class="card-body p-1">
@@ -19,3 +18,39 @@
     <p class="card-text text-muted text-center">{{database.backup_finish_date}} تاریخ آخرین پشتیبان گیری</p>
   </div>
 </div>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title text-right">جزئیات</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="DBInfomodalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body text-right">
+    <p>{{database.database_name}} : نام پایگاه داده</p>
+    <p>{{database.backup_size}} : حجم فایل </p>
+    <p> {{database.description}} : توضیحات</p>
+  </div>
+</ng-template>
+
+<ng-template #template2>
+  <div class="modal-header pull-right">
+    <h5 class="modal-title text-right">{{database.database_name}} پشتیبان گیری از </h5>
+  </div>
+  <div class="modal-body text-right">
+    <p>آیا می خواهید عملیات انجام شود؟</p>
+    <button type="button" class="btn btn-primary mr-1 pull-left" (click)="decline()" >خیر</button>
+    <button type="button" class="btn btn-default pull-left" (click)="confirm()" >بلی</button>
+  </div>
+</ng-template>
+
+<ng-template #template3>
+  <div class="modal-header pull-right">
+    <h5 class="modal-title text-right">مسیر فایل پشتیبان</h5>
+  </div>
+  <div class="modal-body text-right">
+    <p>آیا می خواهید عملیات انجام شود؟</p>
+    <button type="button" class="btn btn-primary mr-1 pull-left" (click)="decline()" >خیر</button>
+    <button type="button" class="btn btn-default pull-left" (click)="confirm()" >بلی</button>
+  </div>
+</ng-template>
