@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { BsDropdownModule ,AccordionModule  } from 'ngx-bootstrap';
+import { BsDropdownModule ,AccordionModule, TooltipModule, ModalModule  } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
@@ -37,7 +37,9 @@ import { ServerListResolver } from './_resolvers/server-list.resolver';
     FormsModule,
     BsDropdownModule.forRoot(),
     RouterModule.forRoot(appRoutes),
-    AccordionModule.forRoot()
+    AccordionModule.forRoot(),
+    TooltipModule.forRoot(),
+    ModalModule.forRoot(),
   ],
   providers: [
       AuthService,

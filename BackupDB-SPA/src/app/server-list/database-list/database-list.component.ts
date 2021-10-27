@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef  } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Database } from 'src/app/_models/database';
 import { DBBackUpProcessInfo } from 'src/app/_models/dbBackUpProcessInfo';
 import { Server } from 'src/app/_models/server';
@@ -15,7 +16,9 @@ export class DatabaseListComponent implements OnInit {
   @Input() server :Server;
   dbBackProcessInfo : DBBackUpProcessInfo = { serverName: '', DBName:''};
   result :any;
-  constructor( private alertify: AlertifyService,private http: HttpClient) { }
+  DBInfomodalRef?: BsModalRef;
+  DBPath_Confirm_modalRef?: BsModalRef;
+  constructor( private alertify: AlertifyService,private http: HttpClient ,private modalService: BsModalService) { }
 
   ngOnInit() {
   }
@@ -27,10 +30,32 @@ export class DatabaseListComponent implements OnInit {
     this.http.post('http://localhost:5051/api/Backup/Process',this.dbBackProcessInfo).subscribe(response => {
       this.result = response;
       console.log('result of Process:'+this.result);
+      this.alertify.success('backup successfully');
     }, error => {
+      this.alertify.error('');
       console.log(error);
     } );
-    this.alertify.success('backup successfully');
   }
+
+  openDBInfoModal(template: TemplateRef<any>) {
+    this.DBInfomodalRef = this.modalService.show(template);
+  }
+
+  openDBPath_Confirm_Modal(template: TemplateRef<any>)
+  {
+    this.DBPath_Confirm_modalRef = this.modalService.show(template, {class: 'modal-sm'});
+    
+  }
+
+  confirm() {
+    this.backup();
+    this.DBPath_Confirm_modalRef.hide();
+  }
+ 
+  decline() {
+    this.DBPath_Confirm_modalRef.hide();
+  }
+
+
 
 }

@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 using DatingApp.API.Data;
 using DatingApp.API.Dtos;
 using DatingApp.API.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
+using System.DirectoryServices.AccountManagement;
 
 namespace DatingApp.API.Controllers
 {
@@ -32,14 +35,25 @@ namespace DatingApp.API.Controllers
             if (await _repo.UserExists(userForRegisterDto.Username))
                 return BadRequest("Username already exists");
 
-            var userToCreate = new User
+            string domainName = System.Environment.UserDomainName;
+            string domainUserName = System.Environment.UserName;
+            PrincipalContext pc = new PrincipalContext(ContextType.Domain, domainName, domainUserName, ContextOptions.SimpleBind.ToString());
+            bool isValid = pc.ValidateCredentials(userForRegisterDto.Server_Username, userForRegisterDto.Server_Password);
+
+            if (isValid)
             {
-                Username = userForRegisterDto.Username
-            };
+                var userToCreate = new User
+                {
+                    Username = userForRegisterDto.Username
+                };
 
-            var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
+                var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
 
-            return StatusCode(201);
+                return StatusCode(201);
+            }
+            else
+                return BadRequest("Server Creditionals is not valid");
+
         }
 
         [HttpPost("login")]

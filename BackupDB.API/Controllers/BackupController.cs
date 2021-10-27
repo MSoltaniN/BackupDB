@@ -141,6 +141,7 @@ namespace BackupDB.API.Controllers
             builder.InitialCatalog = dbForBackUpProcessDto.DBName;
             using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
+                
                 connection.Open();
 
                 String sql = string.Format( @" BACKUP DATABASE {0}
@@ -152,7 +153,7 @@ namespace BackupDB.API.Controllers
                                                , dbForBackUpProcessDto.DBName
                                                , backupPath
                                                 ,dbForBackUpProcessDto.DBName
-                                                ,System.DateTime.Now.ToString().Trim().Replace("/","").Replace(":","-").Replace(" ","-")
+                                                ,System.DateTime.Now.ToString().Trim().Replace("/","-").Replace(":","-").Replace(" ","_")
                                                 ,dbForBackUpProcessDto.DBName 
                                                 );
 
