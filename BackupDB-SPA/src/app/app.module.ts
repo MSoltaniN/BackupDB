@@ -15,11 +15,10 @@ import { AlertifyService } from './_services/alertify.service';
 import { ServerListComponent } from './server-list/server-list.component';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
-import { DatabaseListComponent } from './server-list/database-list/database-list.component';
-//import { DatabaseCardComponent } from './server-list/database-list/database-card/database-card.component';
+import { DatabaseCardComponent } from './server-list/database-card/database-card.component';
 import { ServerService } from './_services/server.service';
 import { ServerListResolver } from './_resolvers/server-list.resolver';
-//import { DatabaseListResolver } from './_resolvers/database-list.resolver';
+//import { DatabaseCardResolver } from './_resolvers/database-card.resolver';
 
 @NgModule({
   declarations: [
@@ -28,8 +27,7 @@ import { ServerListResolver } from './_resolvers/server-list.resolver';
     HomeComponent,
     RegisterComponent,
     ServerListComponent,
-    DatabaseListComponent,
-   // DatabaseCardComponent
+    DatabaseCardComponent,
   ],
   imports: [
     BrowserModule,

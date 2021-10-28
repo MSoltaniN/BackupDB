@@ -31,7 +31,7 @@ namespace BackupDB.API.Controllers
         public List<string> localServers { get; set; }
 
 
-        public BackupController(IDatingRepository repo, IMapper mapper,IConfiguration configuration)
+        public BackupController(IDatingRepository repo, IMapper mapper, IConfiguration configuration)
         {
             _repo = repo;
             _mapper = mapper;
@@ -47,7 +47,7 @@ namespace BackupDB.API.Controllers
             var key = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL");
             List<ServerNameDto> localServers = new List<ServerNameDto>();
             foreach (string sqlserver in key.GetValueNames())
-              localServers.Add(new ServerNameDto{ ServerName = string.Format(@"(local)", Environment.MachineName, sqlserver)} );
+                localServers.Add(new ServerNameDto { ServerName = string.Format(@"(local)", Environment.MachineName, sqlserver) });
 
             //---------------  get from commands ------------------
             //var command = "OSQL -L";
@@ -77,20 +77,28 @@ namespace BackupDB.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("DataBases")]
-        public async Task<IActionResult> GetDataBases([FromBody]ServerNameDto serverNameDto)
+        public async Task<IActionResult> GetDataBases([FromBody] ServerNameDto serverNameDto)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
 
             builder.DataSource = serverNameDto.ServerName;
-            builder.UserID =  _configuration.GetSection("ServerBackUpInfo:ServerUser").Value;
-            builder.Password =  _configuration.GetSection("ServerBackUpInfo:ServerPass").Value;
+            builder.UserID = _configuration.GetSection("ServerBackUpInfo:ServerUser").Value;
+            builder.Password = _configuration.GetSection("ServerBackUpInfo:ServerPass").Value;
             builder.InitialCatalog = "master";
+
+           
+            // Turn on integrated security:
+            builder.Remove("User ID");
+            builder.Remove("Password");
+            builder.IntegratedSecurity = true;
 
             using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
-                connection.Open();
+                try
+                {
+                    connection.Open();
 
-                String sql = @" SELECT DISTINCT a.*  FROM  (SELECT 
+                    String sql = @" SELECT DISTINCT a.*  FROM  (SELECT 
                              --CONVERT(CHAR(100), SERVERPROPERTY('Servername')) AS Server,    
                               ROW_NUMBER() OVER (PARTITION BY  msdb.dbo.backupset.database_name ORDER BY msdb.dbo.backupset.backup_finish_date DESC) AS rank,
                            msdb.dbo.backupset.database_name,   
@@ -116,54 +124,78 @@ namespace BackupDB.API.Controllers
                              ) a
                             WHERE a.rank=1 ";
 
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SqlCommand command = new SqlCommand(sql, connection))
                     {
-                        return Ok(Serialize(reader));
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            return Ok(Serialize(reader));
+                        }
                     }
                 }
+                catch (SqlException ex)
+                {
+                    if (ex.Errors[0].ToString().Contains("Login failed for user"))
+                        return BadRequest(".اطلاعات کاربری برای اتصال به سرور اشتباه است");
+                    if (ex.Errors[0].ToString().Contains("but then an error occurred during the login process"))
+                        return BadRequest("اشکالی در ارتباط وجود دارد، لطفا دوباره امتحان کنید.");
+                    else
+                        return BadRequest(ex.Errors[0].ToString());
+                }
+
             }
         }
 
         [AllowAnonymous]
         [HttpPost("Process")]
-        public async Task<IActionResult> ProcessBackUpDataBases([FromBody]DBForBackUpProcessDto dbForBackUpProcessDto)
+        public async Task<IActionResult> ProcessBackUpDataBases([FromBody] DBForBackUpProcessDto dbForBackUpProcessDto)
         {
             var backupPath = _configuration.GetSection("ServerBackUpInfo:BackUpPath").Value;
-            if(!Directory.Exists(backupPath)) 
+            if (!Directory.Exists(backupPath))
                 Directory.CreateDirectory(backupPath);
 
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
             builder.DataSource = dbForBackUpProcessDto.serverName;
-            builder.UserID =  _configuration.GetSection("ServerBackUpInfo:ServerUser").Value;
-            builder.Password =  _configuration.GetSection("ServerBackUpInfo:ServerPass").Value;
+            builder.UserID = _configuration.GetSection("ServerBackUpInfo:ServerUser").Value;
+            builder.Password = _configuration.GetSection("ServerBackUpInfo:ServerPass").Value;
             builder.InitialCatalog = dbForBackUpProcessDto.DBName;
             using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
-                
-                connection.Open();
+                try
+                {
 
-                String sql = string.Format( @" BACKUP DATABASE {0}
+                    connection.Open();
+
+                    String sql = string.Format(@" BACKUP DATABASE {0}
                                                 TO DISK = '{1}\{2}-{3}.bak'
                                                 WITH FORMAT,
                                                     MEDIANAME = 'SQLServerBackups',
                                                     NAME = 'Full Backup of {4}';
-                                             " 
-                                               , dbForBackUpProcessDto.DBName
-                                               , backupPath
-                                                ,dbForBackUpProcessDto.DBName
-                                                ,System.DateTime.Now.ToString().Trim().Replace("/","-").Replace(":","-").Replace(" ","_")
-                                                ,dbForBackUpProcessDto.DBName 
-                                                );
+                                             "
+                                                   , dbForBackUpProcessDto.DBName
+                                                   , backupPath
+                                                    , dbForBackUpProcessDto.DBName
+                                                    , System.DateTime.Now.ToString().Trim().Replace("/", "-").Replace(":", "-").Replace(" ", "_")
+                                                    , dbForBackUpProcessDto.DBName
+                                                    );
 
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    using (SqlDataReader reader =  command.ExecuteReader())
+                    using (SqlCommand command = new SqlCommand(sql, connection))
                     {
-                        return Ok(Serialize(reader));
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            return Ok(Serialize(reader));
+                        }
                     }
                 }
+                catch (SqlException ex)
+                {
+                    if (ex.Errors[0].ToString().Contains("Login failed for user"))
+                        return BadRequest(".اطلاعات کاربری برای اتصال به پایگاه داده اشتباه است");
+                    if (ex.Errors[0].ToString().Contains("but then an error occurred during the login process"))
+                        return BadRequest("اشکالی در ارتباط وجود دارد، لطفا دوباره امتحان کنید.");
+                    else
+                        return BadRequest(ex.Errors[0].ToString());
+                }
+
             }
         }
         public IEnumerable<Dictionary<string, object>> Serialize(SqlDataReader reader)

@@ -5,7 +5,7 @@ import { DebugElement } from '@angular/core';
 
 import { DatabaseCardComponent } from './database-card.component';
 
-describe('DatabaseCardComponent', () => {
+describe('DatabaseListComponent', () => {
   let component: DatabaseCardComponent;
   let fixture: ComponentFixture<DatabaseCardComponent>;
 

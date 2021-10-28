@@ -8,5 +8,6 @@ export interface Database {
     logical_device_name: string,
     physical_device_name: string,
     backupset_name: string,
-    description: string
+    description: string,
+    include_backup_process: boolean
 }

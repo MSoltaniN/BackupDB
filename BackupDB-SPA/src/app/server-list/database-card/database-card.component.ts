@@ -7,17 +7,18 @@ import { Server } from 'src/app/_models/server';
 import { AlertifyService } from 'src/app/_services/alertify.service';
 
 @Component({
-  selector: 'app-database-list',
-  templateUrl: './database-list.component.html',
-  styleUrls: ['./database-list.component.css']
+  selector: 'app-database-card',
+  templateUrl: './database-card.component.html',
+  styleUrls: ['./database-card.component.css']
 })
-export class DatabaseListComponent implements OnInit {
+export class DatabaseCardComponent implements OnInit {
   @Input() database: Database;
   @Input() server :Server;
   dbBackProcessInfo : DBBackUpProcessInfo = { serverName: '', DBName:''};
   result :any;
   DBInfomodalRef?: BsModalRef;
   DBPath_Confirm_modalRef?: BsModalRef;
+  checked = false;
   constructor( private alertify: AlertifyService,private http: HttpClient ,private modalService: BsModalService) { }
 
   ngOnInit() {
@@ -32,7 +33,7 @@ export class DatabaseListComponent implements OnInit {
       console.log('result of Process:'+this.result);
       this.alertify.success('backup successfully');
     }, error => {
-      this.alertify.error('');
+      this.alertify.error(error);
       console.log(error);
     } );
   }

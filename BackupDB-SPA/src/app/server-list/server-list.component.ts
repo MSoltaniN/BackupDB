@@ -15,6 +15,7 @@ export class ServerListComponent implements OnInit {
   servers: Server[];
   databases:any;
   model: any = {};
+  disabled = true;
 
   constructor(private userService: ServerService, private alertify: AlertifyService,
     private route: ActivatedRoute ,private http: HttpClient) { }
@@ -29,6 +30,7 @@ export class ServerListComponent implements OnInit {
       console.log('in on init of server-list');
     }, error => {
       console.log(error);
+      this.alertify.error(error);
     });
   }
 
@@ -41,6 +43,7 @@ export class ServerListComponent implements OnInit {
         console.log(this.databases);
       }, error => {
         console.log(error);
+        this.alertify.error(error);
       });
     }
     
