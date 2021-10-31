@@ -34,6 +34,8 @@ export class ServerListComponent implements OnInit {
       console.log(error);
       this.notify.error(error);
     });
+
+    
   }
 
   log(event: boolean, server: Server) {
