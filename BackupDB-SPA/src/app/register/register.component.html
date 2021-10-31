@@ -1,0 +1,26 @@
+<form #registerForm="ngForm" (ngSubmit)="register()">
+  <h2 class="text-center text-primary">ثبت کاربر جدید</h2>
+  <hr>
+
+  <div class="form-group">
+    <input type="text" class="form-control text-right" required name="username" [(ngModel)]="model.username" placeholder="نام کاربری">
+  </div>
+
+  <div class="form-group">
+    <input type="password" class="form-control text-right" required name="password" [(ngModel)]="model.password" placeholder="رمز عبور کاربری">
+  </div>
+
+  <div class="form-group">
+    <input type="text" class="form-control text-right" required name="username" [(ngModel)]="model.server_username" placeholder=" نام کاربری سرور">
+  </div>
+
+  <div class="form-group">
+    <input type="password" class="form-control text-right" required name="password" [(ngModel)]="model.server_password" placeholder="رمز عبور سرور">
+  </div>
+
+  <div class="form-group text-center">
+    <button class="btn btn-default" type="button" (click)="cancel()">انصراف</button>
+    <button class="btn btn-success ml-2" type="submit">ثبت</button>
+  </div>
+  
+</form>
