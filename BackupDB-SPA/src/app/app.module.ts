@@ -8,6 +8,10 @@ import { TooltipModule  } from 'ngx-bootstrap/tooltip';
 import {  ModalModule  } from 'ngx-bootstrap/modal';
 import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
+import { MatDialogModule } from '@angular/material/dialog';
+import {MatSelectModule} from '@angular/material/select';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
 
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
@@ -24,6 +28,7 @@ import { ServerService } from './_services/server.service';
 import { ServerListResolver } from './_resolvers/server-list.resolver';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { toArrayPipe } from './_pipes/toArray.pipe';
+import { PathLocatorComponent } from './shared/pathLocator/pathLocator.component';
 //import { DatabaseCardResolver } from './_resolvers/database-card.resolver';
 
 @NgModule({
@@ -34,6 +39,7 @@ import { toArrayPipe } from './_pipes/toArray.pipe';
     RegisterComponent,
     ServerListComponent,
     DatabaseCardComponent,
+    PathLocatorComponent,
     toArrayPipe,
   ],
   imports: [
@@ -47,7 +53,11 @@ import { toArrayPipe } from './_pipes/toArray.pipe';
     ModalModule.forRoot(),
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    MatDialogModule,
+    MatSelectModule ,
+    MatCheckboxModule,
+    MatInputModule 
   ],
   providers: [
       AuthService,
@@ -59,5 +69,7 @@ import { toArrayPipe } from './_pipes/toArray.pipe';
      // DatabaseListResolver,
     ],
   bootstrap: [AppComponent]
+  ,
+  entryComponents: [ PathLocatorComponent ]
 })
 export class AppModule {}

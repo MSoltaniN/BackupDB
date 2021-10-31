@@ -1,0 +1,12 @@
+<form #registerForm="ngForm" (ngSubmit)="ConfirmPath()">
+  <h5 class="text-center text-primary mt-2">لطفا مسیر پیشنهادی را برای ذخیره سازی فایل های پشتیبان وارد کنید</h5>
+  <hr>
+<div class="form-group">
+  <input type="text" class="form-control text-left" required name="username" [(ngModel)]="pathModel" placeholder="مسیر">
+</div>
+
+<div class="form-group text-center">
+  <button class="btn btn-default" type="button" (click)="onNoClick()">انصراف</button>
+  <button class="btn btn-success ml-2" type="submit">تایید</button>
+</div>
+</form>

@@ -1,7 +1,7 @@
 <div class="card mb-4">
   <div class="card-img-wrapper">
     <div class="form-check"><input class="form-check-input" type="checkbox"  id="flexCheckDefault"></div>
-    <!-- <mat-checkbox class="example-margin" [(ngModel)]="checked"></mat-checkbox> -->
+    <!-- <mat-checkbox class="example-margin form-check" [(ngModel)]="checked"></mat-checkbox> -->
     <img class="card-img-top" src="assets/img/DB.jpg" style="opacity: 0.5">
     <ul class="list-inline member-icons animate text-center mt-1">
       <li class="list-inline-item"><button class="btn btn-primary"  (click)="openDBInfoModal(template)"><i class="fa fa-info"></i></button></li>
@@ -42,7 +42,7 @@
   <div class="modal-body text-right">
     <p>آیا می خواهید عملیات انجام شود؟</p>
     <button type="button" class="btn btn-primary mr-1 pull-left" (click)="decline()" >خیر</button>
-    <button type="button" class="btn btn-default pull-left" (click)="confirm()" >بلی</button>
+    <button type="button" class="btn btn-secondary pull-left" (click)="confirm()" >بلی</button>
   </div>
 </ng-template>
 

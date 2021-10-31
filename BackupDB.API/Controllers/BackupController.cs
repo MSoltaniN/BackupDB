@@ -86,7 +86,7 @@ namespace BackupDB.API.Controllers
             builder.Password = _configuration.GetSection("ServerBackUpInfo:ServerPass").Value;
             builder.InitialCatalog = "master";
 
-           
+
             // Turn on integrated security:
             builder.Remove("User ID");
             builder.Remove("Password");
@@ -149,15 +149,32 @@ namespace BackupDB.API.Controllers
         [HttpPost("Process")]
         public async Task<IActionResult> ProcessBackUpDataBases([FromBody] DBForBackUpProcessDto dbForBackUpProcessDto)
         {
-            var backupPath = _configuration.GetSection("ServerBackUpInfo:BackUpPath").Value;
+            string backupPath;
+            if (!string.IsNullOrEmpty(dbForBackUpProcessDto.DBPath))
+            {
+                backupPath = dbForBackUpProcessDto.DBPath;
+                AddOrUpdateAppSetting("ServerBackUpInfo:BackUpPath", backupPath);
+            }
+
+            else
+            {
+                backupPath = _configuration.GetSection("ServerBackUpInfo:BackUpPath").Value;
+            }
             if (!Directory.Exists(backupPath))
                 Directory.CreateDirectory(backupPath);
+
 
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
             builder.DataSource = dbForBackUpProcessDto.serverName;
             builder.UserID = _configuration.GetSection("ServerBackUpInfo:ServerUser").Value;
             builder.Password = _configuration.GetSection("ServerBackUpInfo:ServerPass").Value;
             builder.InitialCatalog = dbForBackUpProcessDto.DBName;
+
+            // Turn on integrated security:
+            builder.Remove("User ID");
+            builder.Remove("Password");
+            builder.IntegratedSecurity = true;
+
             using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
                 try
@@ -188,15 +205,27 @@ namespace BackupDB.API.Controllers
                 }
                 catch (SqlException ex)
                 {
-                    if (ex.Errors[0].ToString().Contains("Login failed for user"))
+                    if (ex.Errors[0].ToString().ToLower().Contains("login failed"))
                         return BadRequest(".اطلاعات کاربری برای اتصال به پایگاه داده اشتباه است");
                     if (ex.Errors[0].ToString().Contains("but then an error occurred during the login process"))
                         return BadRequest("اشکالی در ارتباط وجود دارد، لطفا دوباره امتحان کنید.");
+                    if (ex.Errors[0].ToString().Contains("Access is denied"))
+                        return BadRequest("سیستم به پوشه مورد نظر دسترسی ندارد.");
                     else
                         return BadRequest(ex.Errors[0].ToString());
                 }
 
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("DefaultDBPath")]
+        public async Task<IActionResult> DefaultDBPath()
+        {
+            string backupPath = _configuration.GetSection("ServerBackUpInfo:BackUpPath").Value;
+            if(string.IsNullOrEmpty(backupPath))
+                return BadRequest("not exist");
+            return Ok(JsonConvert.SerializeObject(backupPath));
         }
         public IEnumerable<Dictionary<string, object>> Serialize(SqlDataReader reader)
         {
@@ -217,6 +246,35 @@ namespace BackupDB.API.Controllers
             foreach (var col in cols)
                 result.Add(col, reader[col]);
             return result;
+        }
+
+        public static void AddOrUpdateAppSetting<T>(string key, T value)
+        {
+            try
+            {
+                var filePath = Path.Combine(AppContext.BaseDirectory, "appSettings.json");
+                string json =  System.IO.File.ReadAllText(filePath);
+                dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+
+                var sectionPath = key.Split(":")[0];
+
+                if (!string.IsNullOrEmpty(sectionPath))
+                {
+                    var keyPath = key.Split(":")[1];
+                    jsonObj[sectionPath][keyPath] = value;
+                }
+                else
+                {
+                    jsonObj[sectionPath] = value; // if no sectionpath just set the value
+                }
+
+                string output = Newtonsoft.Json.JsonConvert.SerializeObject(jsonObj, Newtonsoft.Json.Formatting.Indented);
+                System.IO.File.WriteAllText(filePath, output);
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message + "----   Error writing app settings");
+            }
         }
 
     }

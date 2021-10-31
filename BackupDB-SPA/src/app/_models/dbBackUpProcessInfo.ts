@@ -1,4 +1,5 @@
 export interface DBBackUpProcessInfo {
     serverName : string ,
-    DBName : string
+    DBName : string,
+    DBPath : string
 }
