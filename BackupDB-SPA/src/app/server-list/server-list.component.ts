@@ -48,8 +48,7 @@ export class ServerListComponent implements OnInit {
         }
       );
 
-      this.UpdateDBIncludeInBackUpList(this.databases);
-  }
+ }
 
   log(event: boolean, server: Server) {
     console.log(`Accordion has been ${event ? 'opened' : 'closed'}`);
