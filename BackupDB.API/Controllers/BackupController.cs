@@ -27,8 +27,8 @@ namespace BackupDB.API.Controllers
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        [JsonProperty("tags")]
-        public List<string> localServers { get; set; }
+        // [JsonProperty("tags")]
+        //public List<string> localServers { get; set; }
 
 
         public BackupController(IDatingRepository repo, IMapper mapper, IConfiguration configuration)
@@ -43,36 +43,71 @@ namespace BackupDB.API.Controllers
         public async Task<IActionResult> GetServers()
         {
             // -------------    get from registry  -------------
-            var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-            var key = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL");
-            List<ServerNameDto> localServers = new List<ServerNameDto>();
-            foreach (string sqlserver in key.GetValueNames())
-                localServers.Add(new ServerNameDto { ServerName = string.Format(@"(local)", Environment.MachineName, sqlserver) });
+            // var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+            // var key = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL");
+            // List<ServerNameDto> localServers = new List<ServerNameDto>();
+            // foreach (string sqlserver in key.GetValueNames())
+            //     localServers.Add(new ServerNameDto { ServerName = string.Format(@"{0}\\{1}", Environment.MachineName, sqlserver) });
 
             //---------------  get from commands ------------------
-            //var command = "OSQL -L";
-            // string command = @"Get-Service | ?{ $_.DisplayName -like ""SQL Server*"" } | ?{ $_.Name -like ""MSSQL*"" }";
-            // //Regex.Replace(command, @"(\d+\/\d+)""", "$1\\\"");
-            // Debug.WriteLine(command);
-            // await  System.IO.File.WriteAllTextAsync("c:/a/a.txt", command);
-            // System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
-            // procStartInfo.RedirectStandardOutput = true;
-            // procStartInfo.UseShellExecute = false;
-            // procStartInfo.WorkingDirectory = @"C:\";
-            // procStartInfo.CreateNoWindow = true; //whether you want to display the command window
-            // System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            // proc.StartInfo = procStartInfo;
-            // proc.Start();
-            // string result = proc.StandardOutput.ReadToEnd();
+            // var command = "OSQL -L";
+            string command = @"Get-Service";
+            System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
+            procStartInfo.RedirectStandardOutput = true;
+            procStartInfo.UseShellExecute = false;
+            procStartInfo.WorkingDirectory = @"C:\";
+            procStartInfo.CreateNoWindow = false; //whether you want to display the command window
+            System.Diagnostics.Process proc = new System.Diagnostics.Process();
+            proc.StartInfo = procStartInfo;
+            proc.Start();
+            string result = proc.StandardOutput.ReadToEnd();
+            IServiceCollection 
 
-            // //string[] s = result.Trim().Replace(" ", "").Split("\r\n");
-            // string[] s = result.Trim().Replace(" ", "").Split("\r\n");
-            // List<string> s2 = new List<string>();
-            // foreach (var item in s)
-            // {
-            //     s2.Add(item.Substring(item.IndexOf("("),item.IndexOf(")")));
-            // }
-            return Ok(localServers);
+            // Process cmd = new Process();
+            // cmd.StartInfo.FileName = "cmd.exe";
+            // cmd.StartInfo.RedirectStandardInput = true;
+            // cmd.StartInfo.RedirectStandardOutput = true;
+            // cmd.StartInfo.CreateNoWindow = true;
+            // cmd.StartInfo.UseShellExecute = false;
+            // cmd.Start();
+
+            // cmd.StandardInput.WriteLine("Get-Service");
+            // cmd.StandardInput.Flush();
+            // cmd.StandardInput.Close();
+            // cmd.WaitForExit();
+            // string result = cmd.StandardOutput.ReadToEnd();
+
+            int index = -1;
+            List<string> resultSet = new List<string>();
+            while (result.IndexOf(@"SQL Server Agent (") != -1)
+            {
+                result = result.Substring(result.IndexOf(@"SQL Server Agent ("), result.Length - index);
+                resultSet.Add( result.Substring(0, result.IndexOf(@")")+1) );
+                result = result.Substring( result.IndexOf(@")") , result.Length - result.IndexOf(@")"));
+            }
+
+
+
+            // result.Substring(result.IndexOf(@"SQL Server Agent ("), result.IndexOf("\r\n\r\n") + 1);
+            // string[] resultSet = result.Trim().Replace(" ", "").Split("\r\n");
+
+            if (resultSet.Count != 0)
+            {
+                List<ServerNameDto> localServers = new List<ServerNameDto>();
+                foreach (var item in resultSet)
+                {
+                    if (item.IndexOf("(") != -1 && item.IndexOf(")") != -1)
+                        localServers.Add(new ServerNameDto { ServerName = item.Substring(item.IndexOf("("), item.IndexOf(")") + 1) });
+                    // if(item.IndexOf(Environment.MachineName)!=-1 )
+                    //   localServers.Add(new ServerNameDto { ServerName = item });
+                }
+                return Ok(localServers);
+            }
+
+            else
+                return BadRequest("سرور پایگاه داده روی سیستم مورد نظر یافت نشد");
+
+
         }
 
         [AllowAnonymous]
@@ -113,6 +148,7 @@ namespace BackupDB.API.Controllers
                             msdb.dbo.backupmediafamily.physical_device_name,   
                             msdb.dbo.backupset.name AS backupset_name,   
                             msdb.dbo.backupset.description  ,
+                            0 as include_backup_process ,
                              REPLACE ( CONVERT(CHAR(100), SERVERPROPERTY('Servername')),' ','') AS server_name
                             FROM  
                             msdb.dbo.backupmediafamily  
