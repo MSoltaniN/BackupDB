@@ -1,0 +1,27 @@
+
+<!-- <ng-template #template2> -->
+<div class="text-wrap">
+  <div class="modal-header text-right">
+    <ul class="list-group ">
+        <li class="list-group-item pull-left"  *ngFor="let database of databases" class="fa fa-hdd-o">  {{database.database_name}}   </li>
+     </ul>
+    <h5  class="modal-title "> پشتیبان گیری از پایگاه داده های  </h5>
+  </div>
+  <div class="modal-body text-right">
+    <p>آیا می خواهید عملیات انجام شود؟</p>
+    <button type="button" class="btn btn-primary mr-1 pull-left" (click)="decline()" >خیر</button>
+    <button type="button" class="btn btn-secondary pull-left" (click)="confirm()" >بلی</button>
+  </div>
+</div>
+<!-- </ng-template> -->
+
+<ng-template #template3>
+  <div class="modal-header pull-right">
+    <h5 class="modal-title text-right">مسیر فایل پشتیبان</h5>
+  </div>
+  <div class="modal-body text-right">
+    <p>آیا می خواهید عملیات انجام شود؟</p>
+    <button type="button" class="btn btn-primary mr-1 pull-left" (click)="decline()" >خیر</button>
+    <button type="button" class="btn btn-default pull-left" (click)="confirm()" >بلی</button>
+  </div>
+</ng-template>

@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, TemplateRef ,EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef ,EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BackUpComponent } from 'src/app/shared/backUp/backUp.component';
 import { PathLocatorComponent } from 'src/app/shared/pathLocator/pathLocator.component';
 import { Database } from 'src/app/_models/database';
 import { DBBackUpProcessInfo } from 'src/app/_models/dbBackUpProcessInfo';
@@ -16,10 +17,9 @@ import { NotificationService } from 'src/app/_services/notification.service';
 export class DatabaseCardComponent implements OnInit {
   @Input() database: Database = <Database>{};
   @Input() server :Server = <Server>{};
+  @Output() emitDBIncludeInBackUpEvent : EventEmitter<any> = new EventEmitter();
   dbBackProcessInfo : DBBackUpProcessInfo = { serverName: '', DBName:'' , DBPath:''};
-  result :any;
   DBInfomodalRef: BsModalRef =<BsModalRef>{};
-  DBPath_Confirm_modalRef: BsModalRef =<BsModalRef>{};
   checked = false;
 
   
@@ -38,47 +38,15 @@ export class DatabaseCardComponent implements OnInit {
     this.DBInfomodalRef = this.modalService.show(template);
   }
 
-  openDBPath_Confirm_Modal(template: TemplateRef<any>)
+  openDBPath_Confirm_Modal()
   {
-    this.DBPath_Confirm_modalRef = this.modalService.show(template, {class: 'modal-sm'});
+    const initialState = { databases: [this.database]  };
+    this.modalService.show(BackUpComponent , { initialState });
   }
 
-  confirm() {
-    this.openPathDialog();
-   
-    this.DBPath_Confirm_modalRef.hide();
-  }
- 
-  decline() {
-    this.DBPath_Confirm_modalRef.hide();
-  }
-
-  openPathDialog(): void {
-    const initialState = {
-      pathModel: 
-        [this.dbBackProcessInfo.DBPath]
-  };
-    this.DBPath_modalRef = this.modalService.show(PathLocatorComponent, {initialState});
-    this.DBPath_modalRef.content.passEntryEvent.subscribe((res: { data: string; }) =>
-      {
-        this.path = res.data
-        this.backup();
-      }
-    )
-  }
-
-  backup(){
-    this.dbBackProcessInfo.DBName = this.database.database_name;
-    this.dbBackProcessInfo.serverName = this.server.serverName;
-    this.dbBackProcessInfo.DBPath = this.path;
-    this.notify.warning('در حال انجام پشتیبان گیری..');
-    this.http.post('http://localhost:5051/api/Backup/Process',this.dbBackProcessInfo).subscribe(response => {
-      this.result = response;
-      this.notify.success('پشتیبان گیری با موفقیت انجام شد');
-    }, error => {
-      this.notify.error(error);
-      console.log(error);
-    } );
+  emitCheckedEvent(){
+    this.database.include_backup_process = !this.database.include_backup_process;
+    this.emitDBIncludeInBackUpEvent.emit( { data: this.database, res:200});
   }
 
 }

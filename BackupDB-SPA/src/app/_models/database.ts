@@ -9,5 +9,6 @@ export interface Database {
     physical_device_name: string,
     backupset_name: string,
     description: string,
-    include_backup_process: boolean
+    include_backup_process: boolean,
+    server_name: string
 }

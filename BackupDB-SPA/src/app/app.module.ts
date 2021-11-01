@@ -29,6 +29,7 @@ import { ServerListResolver } from './_resolvers/server-list.resolver';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { toArrayPipe } from './_pipes/toArray.pipe';
 import { PathLocatorComponent } from './shared/pathLocator/pathLocator.component';
+import { BackUpComponent } from './shared/backUp/backUp.component';
 //import { DatabaseCardResolver } from './_resolvers/database-card.resolver';
 
 @NgModule({
@@ -41,6 +42,7 @@ import { PathLocatorComponent } from './shared/pathLocator/pathLocator.component
     DatabaseCardComponent,
     PathLocatorComponent,
     toArrayPipe,
+    BackUpComponent,
   ],
   imports: [
     BrowserModule,
