@@ -16,10 +16,10 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 })
 export class ServerListComponent implements OnInit {
   servers: Server[] = <Server[]>{};
-  databases: Database[] = <Database[]>{};
+
   model: any = {};
   groupBackUpdisabled = true;
-   backUpList: Database[] = [];
+  backUpList: Database[] = [];
 
   constructor(
     private userService: ServerService,
@@ -47,62 +47,58 @@ export class ServerListComponent implements OnInit {
           this.notify.error(error);
         }
       );
-
- }
+  }
 
   log(event: boolean, server: Server) {
     console.log(`Accordion has been ${event ? 'opened' : 'closed'}`);
     if (event) {
-      this.http
-        .post<Database[]>('http://localhost:5051/api/Backup/DataBases', server)
-        .subscribe(
-          (response) => {
-            this.databases = response;
-            console.log(this.databases);
-          },
-          (error) => {
-            console.log(error);
-            this.notify.error(error);
-          }
-        );
-    }
-    else
-      this.RemoveDBIncludeInBackUpList();
+      // this.http
+      //   .post<Database[]>('http://localhost:5051/api/Backup/DataBases', server)
+      //   .subscribe(
+      //     (response) => {
+      //       this.databases = response;
+      //       console.log(this.databases);
+      //     },
+      //     (error) => {
+      //       console.log(error);
+      //       this.notify.error(error);
+      //     }
+      //   );
+    } else this.RemoveDBIncludeInBackUpList();
   }
 
-  UpdateDBIncludeInBackUpList(database:any) {
-  
-    if(database.data.include_backup_process === true)
-     this.backUpList.push(database.data);
-     else
-     {
+  UpdateDBIncludeInBackUpList(database: any) {
+
+    if (database.data.include_backup_process === true) {
+      this.backUpList.push(database.data);
+    } else {
       var count = this.backUpList.indexOf(database.data);
-      this.backUpList.splice(count,1)
-     }
-     
+      this.backUpList.splice(count, 1);
+    }
 
-    if (this.backUpList.filter((x) => (x.include_backup_process = true)).length >  0 )
+    if (
+      this.backUpList.filter((x) => (x.include_backup_process = true)).length >
+      0
+    )
       this.groupBackUpdisabled = false;
-    else
-      this.groupBackUpdisabled = true;
+    else this.groupBackUpdisabled = true;
 
-
-    console.log(this.backUpList.filter((x) => (x.include_backup_process = true)));
+    console.log(
+      this.backUpList.filter((x) => (x.include_backup_process = true))
+    );
   }
 
-  RemoveDBIncludeInBackUpList()
-  {
-      this.backUpList.splice(0,this.backUpList.length);
-      this.groupBackUpdisabled = true;
+  RemoveDBIncludeInBackUpList() {
+    this.backUpList.splice(0, this.backUpList.length);
+    this.groupBackUpdisabled = true;
   }
 
-  OnClickGroupBackUp()
-  {
-    const initialState = { databases: this.backUpList.filter((x) => (x.include_backup_process = true)) };
-    this.modalService.show(BackUpComponent , { initialState });
-    
-    
+  OnClickGroupBackUp() {
+    const initialState = {
+      databases: this.backUpList.filter(
+        (x) => (x.include_backup_process = true)
+      ),
+    };
+    this.modalService.show(BackUpComponent, { initialState });
   }
-
-
 }

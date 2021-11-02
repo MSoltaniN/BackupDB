@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Database } from 'src/app/_models/database';
 import { DBBackUpProcessInfo } from 'src/app/_models/dbBackUpProcessInfo';
-import { Server } from 'src/app/_models/server';
 import { NotificationService } from 'src/app/_services/notification.service';
 import { PathLocatorComponent } from '../pathLocator/pathLocator.component';
 
@@ -43,9 +42,8 @@ export class BackUpComponent implements OnInit {
   openPathDialog(): void {
    
     const initialState = {
-      pathModel: [this.path]
+      pathModel: this.path
   };
-  console.log("initialState for path locator" + this.path)
     this.DBPath_modalRef = this.modalService.show(PathLocatorComponent, {initialState});
     this.DBPath_modalRef.content.passEntryEvent.subscribe((res: { data: string; }) =>
       {
@@ -59,14 +57,17 @@ export class BackUpComponent implements OnInit {
     console.log("in backup method ");
     console.log( this.path);
     this.databases.forEach(element => {
-      this.dbBackProcessInfo.push({DBName: element.database_name,serverName: element.server_name,DBPath: this.path});
+      this.dbBackProcessInfo.push({DBName: element.database_name,serverName: element.server_name,DBPath: <string>this.path});
     });
-    this.notify.warning('در حال انجام پشتیبان گیری..');
+    this.notify.OnStartedBackUp(true);
+    this.notify.progress('در حال انجام پشتیبان گیری..');
     console.log( this.dbBackProcessInfo);
     this.http.post('http://localhost:5051/api/Backup/Process',this.dbBackProcessInfo).subscribe(response => {
+      this.notify.OnCompletedBackUp(true);
       this.notify.success('پشتیبان گیری با موفقیت انجام شد');
     }, error => {
-      this.notify.error(error);
+      this.notify.OnCompletedBackUp(true);
+      this.notify.fatalerror(error);
       console.log(error);
     } );
   }

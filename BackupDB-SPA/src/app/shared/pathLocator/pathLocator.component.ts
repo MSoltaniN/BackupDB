@@ -10,7 +10,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 })
 export class PathLocatorComponent implements OnInit {
   oldPath: string = '';
-  pathModel: any = {};
+  pathModel: string = '';
   public passEntryEvent: EventEmitter<any> = new EventEmitter();
 
   constructor( public bsModalRef: BsModalRef) { }

@@ -8,9 +8,7 @@
   <accordion-group *ngFor="let server of servers | toArray"  class=" text-right  mt-4" heading="{{server.serverName}} نام سرور"  (isOpenChange)="log($event, server)"  >
     <div class="container mt-5">
       <div class="row">
-        <div *ngFor="let database of databases  | toArray" class="col-lg-2 col-md-3 col-sm-6">
-          <app-database-card [database]="database"  [server]="server" (emitDBIncludeInBackUpEvent)="UpdateDBIncludeInBackUpList($event)"></app-database-card>
-        </div>
+        <app-database-list [server]= "server" (emitPassDBIncludeInBackUpEvent)="UpdateDBIncludeInBackUpList($event)"></app-database-list>
       </div>
     </div> 
   </accordion-group>

@@ -1,0 +1,5 @@
+<div class="row">
+  <div  *ngFor="let database of databases | toArray"  class="col-lg-2 col-md-3 col-sm-6" >
+    <app-database-card [server]="server" [database]="database" (emitDBIncludeInBackUpEvent)="PassDBIncludeInBackUpList($event)" ></app-database-card>
+  </div>
+</div>

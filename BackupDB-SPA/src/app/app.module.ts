@@ -12,6 +12,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
+import { NgProgressModule  } from 'ngx-progressbar';
+import { NgProgressHttpModule } from 'ngx-progressbar/http';
 
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
@@ -30,6 +32,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { toArrayPipe } from './_pipes/toArray.pipe';
 import { PathLocatorComponent } from './shared/pathLocator/pathLocator.component';
 import { BackUpComponent } from './shared/backUp/backUp.component';
+import { DatabaseListComponent } from './server-list/database-list/database-list.component';
 //import { DatabaseCardResolver } from './_resolvers/database-card.resolver';
 
 @NgModule({
@@ -43,6 +46,7 @@ import { BackUpComponent } from './shared/backUp/backUp.component';
     PathLocatorComponent,
     toArrayPipe,
     BackUpComponent,
+    DatabaseListComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +63,12 @@ import { BackUpComponent } from './shared/backUp/backUp.component';
     MatDialogModule,
     MatSelectModule ,
     MatCheckboxModule,
-    MatInputModule 
+    MatInputModule    ,
+     NgProgressModule.withConfig({
+      spinnerPosition: "left",
+      color: "#f71cff"
+    }),
+    NgProgressHttpModule
   ],
   providers: [
       AuthService,

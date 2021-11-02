@@ -52,38 +52,25 @@ namespace BackupDB.API.Controllers
             //---------------  get from commands ------------------
             // var command = "OSQL -L";
             string command = @"Get-Service";
-            System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
+            System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("powershell.exe ", "-Command  " + command);
             procStartInfo.RedirectStandardOutput = true;
+            procStartInfo.RedirectStandardError = true;
             procStartInfo.UseShellExecute = false;
             procStartInfo.WorkingDirectory = @"C:\";
-            procStartInfo.CreateNoWindow = false; //whether you want to display the command window
+            procStartInfo.CreateNoWindow = true; //whether you want to display the command window
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
             proc.Start();
             string result = proc.StandardOutput.ReadToEnd();
-            IServiceCollection 
-
-            // Process cmd = new Process();
-            // cmd.StartInfo.FileName = "cmd.exe";
-            // cmd.StartInfo.RedirectStandardInput = true;
-            // cmd.StartInfo.RedirectStandardOutput = true;
-            // cmd.StartInfo.CreateNoWindow = true;
-            // cmd.StartInfo.UseShellExecute = false;
-            // cmd.Start();
-
-            // cmd.StandardInput.WriteLine("Get-Service");
-            // cmd.StandardInput.Flush();
-            // cmd.StandardInput.Close();
-            // cmd.WaitForExit();
-            // string result = cmd.StandardOutput.ReadToEnd();
 
             int index = -1;
             List<string> resultSet = new List<string>();
-            while (result.IndexOf(@"SQL Server Agent (") != -1)
+            result = result.Trim().Replace(" ", "");
+            while (result.IndexOf(@"SQLServerAgent(") != -1)
             {
-                result = result.Substring(result.IndexOf(@"SQL Server Agent ("), result.Length - index);
-                resultSet.Add( result.Substring(0, result.IndexOf(@")")+1) );
-                result = result.Substring( result.IndexOf(@")") , result.Length - result.IndexOf(@")"));
+                result = result.Substring(result.IndexOf(@"SQLServerAgent("), result.Length - result.IndexOf(@"SQLServerAgent("));
+                resultSet.Add(result.Substring(0, result.IndexOf(@")") + 1));
+                result = result.Substring(result.IndexOf(@")"), result.Length - result.IndexOf(@")"));
             }
 
 
@@ -96,14 +83,19 @@ namespace BackupDB.API.Controllers
                 List<ServerNameDto> localServers = new List<ServerNameDto>();
                 foreach (var item in resultSet)
                 {
-                    if (item.IndexOf("(") != -1 && item.IndexOf(")") != -1)
-                        localServers.Add(new ServerNameDto { ServerName = item.Substring(item.IndexOf("("), item.IndexOf(")") + 1) });
+                    string tmpItem = item;
+                    if (tmpItem.IndexOf("(MSSQLSERVER)") != -1)
+                        tmpItem = tmpItem.Replace("(MSSQLSERVER)", "(local)");
+
+                    if (tmpItem.IndexOf("(local)") != -1)
+                        localServers.Add(new ServerNameDto { ServerName = tmpItem.Substring(tmpItem.IndexOf("("), tmpItem.IndexOf(")") - tmpItem.IndexOf("(") + 1) });
+                    else if (tmpItem.IndexOf("(") != -1 && tmpItem.IndexOf(")") != -1)
+                        localServers.Add(new ServerNameDto { ServerName = Environment.MachineName + "\\" + tmpItem.Substring(tmpItem.IndexOf("(") + 1, tmpItem.IndexOf(")") - tmpItem.IndexOf("(") - 1) });
                     // if(item.IndexOf(Environment.MachineName)!=-1 )
                     //   localServers.Add(new ServerNameDto { ServerName = item });
                 }
                 return Ok(localServers);
             }
-
             else
                 return BadRequest("سرور پایگاه داده روی سیستم مورد نظر یافت نشد");
 
@@ -185,6 +177,7 @@ namespace BackupDB.API.Controllers
         [HttpPost("Process")]
         public async Task<IActionResult> ProcessBackUpDataBases([FromBody] DBForBackUpProcessDto[] dbForBackUpProcessDto)
         {
+            string ErrMsg = "";
             foreach (var item in dbForBackUpProcessDto)
             {
                 string backupPath;
@@ -244,18 +237,20 @@ namespace BackupDB.API.Controllers
                     catch (SqlException ex)
                     {
                         if (ex.Errors[0].ToString().ToLower().Contains("login failed"))
-                            return BadRequest(".اطلاعات کاربری برای اتصال به پایگاه داده اشتباه است");
-                        if (ex.Errors[0].ToString().Contains("but then an error occurred during the login process"))
-                            return BadRequest("اشکالی در ارتباط وجود دارد، لطفا دوباره امتحان کنید.");
-                        if (ex.Errors[0].ToString().Contains("Access is denied"))
-                            return BadRequest("سیستم به پوشه مورد نظر دسترسی ندارد.");
+                            ErrMsg +=  ".اطلاعات کاربری برای اتصال به پایگاه داده اشتباه است" + " : " + item.DBName + "\r\n";
+                        else if (ex.Errors[0].ToString().Contains("but then an error occurred during the login process"))
+                            ErrMsg += ".اشکالی در ارتباط وجود دارد، لطفا دوباره امتحان کنید" + " : " + item.DBName + "\r\n";
+                        else if (ex.Errors[0].ToString().Contains("Access is denied"))
+                            ErrMsg += ".سیستم به پوشه مورد نظر دسترسی ندارد" + " : "  + item.DBName + "\r\n";
                         else
-                            return BadRequest(ex.Errors[0].ToString());
+                            ErrMsg += ex.Errors[0].ToString() + " : "  + item.DBName + "\r\n";
                     }
-
                 }
             }
-            return Ok();
+            if (ErrMsg != "")
+                return BadRequest(ErrMsg);
+            else
+                return Ok();
 
         }
 

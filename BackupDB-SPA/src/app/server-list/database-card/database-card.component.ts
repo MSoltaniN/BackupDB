@@ -46,6 +46,8 @@ export class DatabaseCardComponent implements OnInit {
 
   emitCheckedEvent(){
     this.database.include_backup_process = !this.database.include_backup_process;
+    console.log("on datbase card - emit ");
+    console.log(this.database);
     this.emitDBIncludeInBackUpEvent.emit( { data: this.database, res:200});
   }
 
