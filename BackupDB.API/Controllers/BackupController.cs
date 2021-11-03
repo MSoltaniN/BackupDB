@@ -125,7 +125,7 @@ namespace BackupDB.API.Controllers
                 {
                     connection.Open();
 
-                    String sql = @" SELECT DISTINCT a.*  FROM  (SELECT 
+                    String sql = @" SELECT 
                             ROW_NUMBER() OVER (PARTITION BY  msdb.dbo.backupset.database_name ORDER BY msdb.dbo.backupset.backup_finish_date DESC) AS rank,
                            msdb.dbo.backupset.database_name,   
                             msdb.dbo.backupset.backup_start_date,   
@@ -149,8 +149,7 @@ namespace BackupDB.API.Controllers
                             --ORDER BY  
                            -- msdb.dbo.backupset.database_name,   
                             --msdb.dbo.backupset.backup_finish_date
-                             ) a
-                            WHERE a.rank=1 ";
+                             ";
 
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {

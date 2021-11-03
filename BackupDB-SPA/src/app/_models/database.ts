@@ -10,5 +10,6 @@ export interface Database {
     backupset_name: string,
     description: string,
     include_backup_process: boolean,
-    server_name: string
+    server_name: string,
+    rank : number
 }

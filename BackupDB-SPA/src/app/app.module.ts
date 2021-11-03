@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { NgProgressModule  } from 'ngx-progressbar';
 import { NgProgressHttpModule } from 'ngx-progressbar/http';
 
+
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
 import { AuthService } from './_services/auth.service';
@@ -25,7 +26,7 @@ import { NotificationService } from './_services/notification.service';
 import { ServerListComponent } from './server-list/server-list.component';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
-import { DatabaseCardComponent } from './server-list/database-card/database-card.component';
+import { DatabaseCardComponent } from './server-list/database-list/database-card/database-card.component';
 import { ServerService } from './_services/server.service';
 import { ServerListResolver } from './_resolvers/server-list.resolver';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -33,6 +34,8 @@ import { toArrayPipe } from './_pipes/toArray.pipe';
 import { PathLocatorComponent } from './shared/pathLocator/pathLocator.component';
 import { BackUpComponent } from './shared/backUp/backUp.component';
 import { DatabaseListComponent } from './server-list/database-list/database-list.component';
+import { FileSizePipe } from './_pipes/file-size.pipe';
+import { JaliliPipe } from './_pipes/jalili.pipe';
 //import { DatabaseCardResolver } from './_resolvers/database-card.resolver';
 
 @NgModule({
@@ -46,7 +49,9 @@ import { DatabaseListComponent } from './server-list/database-list/database-list
     PathLocatorComponent,
     toArrayPipe,
     BackUpComponent,
-    DatabaseListComponent
+    DatabaseListComponent,
+    FileSizePipe,
+    JaliliPipe
   ],
   imports: [
     BrowserModule,

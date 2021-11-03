@@ -10,6 +10,7 @@ import { NotificationService } from 'src/app/_services/notification.service';
   styleUrls: ['./database-list.component.css']
 })
 export class DatabaseListComponent implements OnInit {
+  databasesBackups : Database[] = <Database[]>{};
   databases: Database[] = <Database[]>{};
   @Input() server : Server = <Server>{};
   @Output() emitPassDBIncludeInBackUpEvent : EventEmitter<any> = new EventEmitter();
@@ -20,8 +21,8 @@ export class DatabaseListComponent implements OnInit {
     .post<Database[]>('http://localhost:5051/api/Backup/DataBases', this.server)
     .subscribe(
       (response) => {
-        this.databases = response;
-        console.log(this.databases);
+        this.databasesBackups = response;
+         this.databases = this.databasesBackups.filter(x =>x.rank === 1);
       },
       (error) => {
         console.log(error);

@@ -39,8 +39,6 @@ export class ServerListComponent implements OnInit {
       .subscribe(
         (response) => {
           this.servers = response;
-          console.log(this.servers);
-          // this.snackBar.open("massege","action")
         },
         (error) => {
           console.log(error);
@@ -83,9 +81,6 @@ export class ServerListComponent implements OnInit {
       this.groupBackUpdisabled = false;
     else this.groupBackUpdisabled = true;
 
-    console.log(
-      this.backUpList.filter((x) => (x.include_backup_process = true))
-    );
   }
 
   RemoveDBIncludeInBackUpList() {

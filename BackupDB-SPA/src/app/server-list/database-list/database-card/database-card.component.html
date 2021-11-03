@@ -1,0 +1,60 @@
+<div class="card mb-4">
+  <div class="card-img-wrapper">
+    <div class="form-check"><input class="form-check-input" type="checkbox"  id="flexCheckDefault" (click)="emitCheckedEvent()"></div>
+    <!-- <mat-checkbox class="example-margin form-check" [(ngModel)]="checked"></mat-checkbox> -->
+    <img class="card-img-top" src="assets/img/DB.jpg" style="opacity: 0.5">
+    <ul class="list-inline member-icons animate text-center mt-1">
+      <li class="list-inline-item"><button class="btn btn-primary"  (click)="openModal(template)" tooltip="اطلاعات بیشتر"><i class="fa fa-info"></i></button></li>
+      <li class="list-inline-item"><button class="btn btn-primary d-inline-block" (click)="openDBPath_Confirm_Modal()" tooltip="پشتیبان گیری"><i class="fa fa-hdd-o" data-toggle="tooltip" data-placement="top"></i></button></li>
+      <li class="list-inline-item"><button class="btn btn-primary"  (click)="openModal(template2)" tooltip="لیست فایل های پشتیبان موجود" ><i class="fa fa-list"  ></i></button></li>
+    </ul>
+  </div>
+  <div class="card-body p-1">
+    <p class="card-title text-center mb-1"><i class="fa fa-hdd-o"></i>
+      {{database.database_name}}  
+    </p>
+    <p class="card-text text-muted text-center"> تاریخ آخرین پشتیبان گیری  {{database.backup_finish_date | jalili }}</p>
+  </div>
+</div>
+
+<ng-template #template>
+  <div class="modal-header">
+    <div>
+      <button type="button" class="btn-close close fixed-left" aria-label="Close" (click)="DBInfomodalRef?.hide()">
+        <!-- <span aria-hidden="true" class="visually-hidden">&times;</span> -->
+      </button>
+    </div>
+   
+    <h4 class="modal-title text-right">جزئیات</h4>
+  </div>
+  <div class="modal-body text-right">
+    <p>{{database.database_name}} : نام پایگاه داده</p>
+    <p>{{database.physical_device_name}} :مسیر فایل پشتیبان</p>
+    <p>{{database.backupset_name }} : نوع پشتیبان گیری</p>
+    <p>{{database.backup_size | fileSize}} : حجم فایل </p>
+    <p> {{database.backup_start_date  }} : تاریخ اولین پشتیبان گیری</p> 
+    <p> {{database.backup_finish_date  }} : تاریخ آخرین پشتیبان گیری</p> 
+    <p> {{database.description}} : توضیحات</p>
+  </div>
+</ng-template>
+
+<ng-template #template2>
+  <div class="modal-header">
+    <div>
+      <button type="button" class="btn-close close fixed-left" aria-label="Close" (click)="DBInfomodalRef?.hide()">
+        <!-- <span aria-hidden="true" class="visually-hidden">&times;</span> -->
+      </button>
+    </div>
+   
+    <h4 class="modal-title text-right">لیست فایل های پشتیبان موجود</h4>
+  </div>
+  <div class="modal-body text-right">
+    <ul class="list-inline  animate "  *ngFor="let databaseBackup of databasesBackups">
+      <li class="list-inline-item "  >{{ databaseBackup.backup_size | fileSize}} : حجم فایل </li>
+      <li class="list-inline-item "  >{{ databaseBackup.backup_finish_date | jalili}} : تاریخ ایجاد </li>
+      <li class="list-inline-item "  >{{ databaseBackup.database_name}} </li>
+      <i class="fa fa-hdd-o "  ></i>
+      <li class="list-inline-item "  ><small class="text-muted "style="font-size: small" >{{database.physical_device_name}} :مسیر فایل پشتیبان</small></li>
+    </ul>
+  </div>
+</ng-template>

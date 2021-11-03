@@ -5,7 +5,7 @@
   </ul>
   
 <accordion>
-  <accordion-group *ngFor="let server of servers | toArray"  class=" text-right  mt-4" heading="{{server.serverName}} نام سرور"  (isOpenChange)="log($event, server)"  >
+  <accordion-group *ngFor="let server of servers | toArray"  class=" text-left  mt-4" heading="{{server.serverName}}"  (isOpenChange)="log($event, server)"  >
     <div class="container mt-5">
       <div class="row">
         <app-database-list [server]= "server" (emitPassDBIncludeInBackUpEvent)="UpdateDBIncludeInBackUpList($event)"></app-database-list>

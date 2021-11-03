@@ -15,6 +15,7 @@ import { NotificationService } from 'src/app/_services/notification.service';
   styleUrls: ['./database-card.component.css']
 })
 export class DatabaseCardComponent implements OnInit {
+  @Input() databasesBackups : Database[] = <Database[]>{};
   @Input() database: Database = <Database>{};
   @Input() server :Server = <Server>{};
   @Output() emitDBIncludeInBackUpEvent : EventEmitter<any> = new EventEmitter();
@@ -32,9 +33,11 @@ export class DatabaseCardComponent implements OnInit {
     this.http.get<string>('http://localhost:5051/api/Backup/DefaultDBPath').subscribe( Response =>
     this.dbBackProcessInfo.DBPath = Response,
     )
+
+    this.databasesBackups = this.databasesBackups.filter(x => x.database_name == this.database.database_name);
   }
 
-  openDBInfoModal(template: TemplateRef<any>) {
+  openModal(template: TemplateRef<any>) {
     this.DBInfomodalRef = this.modalService.show(template);
   }
 
@@ -50,5 +53,7 @@ export class DatabaseCardComponent implements OnInit {
     console.log(this.database);
     this.emitDBIncludeInBackUpEvent.emit( { data: this.database, res:200});
   }
+
+
 
 }
