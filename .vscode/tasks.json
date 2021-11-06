@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/BackupDB.API/DatingApp.API.csproj",
+                "${workspaceFolder}/BackupDB.API/BackupDB.API.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/BackupDB.API/DatingApp.API.csproj",
+                "${workspaceFolder}/BackupDB.API/BackupDB.API.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,11 +32,85 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/BackupDB.API/DatingApp.API.csproj",
+                "${workspaceFolder}/BackupDB.API/BackupDB.API.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build: debug",
+            "dependsOn": [
+                "build"
+            ],
+            "dockerBuild": {
+                "tag": "backupdb:dev",
+                "target": "base",
+                "dockerfile": "${workspaceFolder}/BackupDB.API/Dockerfile",
+                "context": "${workspaceFolder}",
+                "pull": true
+            },
+            "netCore": {
+                "appProject": "${workspaceFolder}/BackupDB.API/BackupDB.API.csproj"
+            }
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build: release",
+            "dependsOn": [
+                "build"
+            ],
+            "dockerBuild": {
+                "tag": "backupdb:latest",
+                "dockerfile": "${workspaceFolder}/BackupDB.API/Dockerfile",
+                "context": "${workspaceFolder}",
+                "pull": true
+            },
+            "netCore": {
+                "appProject": "${workspaceFolder}/BackupDB.API/BackupDB.API.csproj"
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: debug",
+            "dependsOn": [
+                "docker-build"
+            ],
+            "dockerRun": {
+                "env": {
+                    "DEBUG": "*",
+                    "NODE_ENV": "development"
+                }
+            },
+            "node": {
+                "package": "${workspaceFolder}/BackupDB-SPA/package.json",
+                "enableDebugging": true
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: release",
+            "dependsOn": [
+                "docker-build"
+            ],
+            "platform": "node",
+            "node": {
+                "package": "${workspaceFolder}/BackupDB-SPA/package.json"
+            }
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build",
+            "platform": "node",
+            "dockerBuild": {
+                "dockerfile": "${workspaceFolder}/BackupDB-SPA/Dockerfile",
+                "context": "${workspaceFolder}/BackupDB-SPA",
+                "pull": true
+            },
+            "node": {
+                "package": "${workspaceFolder}/BackupDB-SPA/package.json"
+            }
         }
     ]
 }

@@ -21,13 +21,15 @@
       </div>
     </div>
 
+   <div class="float-right">
     <ul *ngIf="loggedIn()" class="navbar-nav mr-auto">
-      <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" [routerLink]="['api/BackUp/servers']">  سرورها</a>
-      </li>
+        <li class="nav-item " routerLinkActive="active">
+          <a class="nav-link" [routerLink]="['api/BackUp/servers']">  لیست سرورها</a>
+        </li>
     </ul>
+   </div>
 
-    <a class="navbar-brand" routerLinkActive="deactive" [routerLink]="['/home']">پنل مدیریت</a>
+    <a class="navbar-brand" routerLinkActive="deactive" [routerLink]="['/home']">صفحه اصلی</a>
 
   </div>
 </nav>

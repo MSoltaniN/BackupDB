@@ -22,7 +22,7 @@ export class ServerListComponent implements OnInit {
   backUpList: Database[] = [];
 
   constructor(
-    private userService: ServerService,
+    private serverService: ServerService,
     private notify: NotificationService,
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -34,34 +34,24 @@ export class ServerListComponent implements OnInit {
     //   this.servers = data['server'];
     // });
     console.log('in on init of server-list');
-    this.http
-      .get<Server[]>('http://localhost:5051/api/BackUp/servers')
-      .subscribe(
-        (response) => {
-          this.servers = response;
-        },
-        (error) => {
-          console.log(error);
-          this.notify.error(error);
-        }
-      );
+    // this.http
+    //   .get<Server[]>('http://localhost:5051/api/BackUp/servers')
+    //   .subscribe(
+    //     (response) => {
+    //       this.servers = response;
+    //     },
+    //     (error) => {
+    //       console.log(error);
+    //       this.notify.error(error);
+    //     }
+    //   );
+    
+      this.servers = this.serverService.getServers()
   }
 
   log(event: boolean, server: Server) {
     console.log(`Accordion has been ${event ? 'opened' : 'closed'}`);
     if (event) {
-      // this.http
-      //   .post<Database[]>('http://localhost:5051/api/Backup/DataBases', server)
-      //   .subscribe(
-      //     (response) => {
-      //       this.databases = response;
-      //       console.log(this.databases);
-      //     },
-      //     (error) => {
-      //       console.log(error);
-      //       this.notify.error(error);
-      //     }
-      //   );
     } else this.RemoveDBIncludeInBackUpList();
   }
 

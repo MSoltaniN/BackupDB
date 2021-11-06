@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Input, OnInit, TemplateRef ,EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -8,6 +8,12 @@ import { Database } from 'src/app/_models/database';
 import { DBBackUpProcessInfo } from 'src/app/_models/dbBackUpProcessInfo';
 import { Server } from 'src/app/_models/server';
 import { NotificationService } from 'src/app/_services/notification.service';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    Authorization: 'Bearer ' + localStorage.getItem('token'),
+  }),
+};
 
 @Component({
   selector: 'app-database-card',
@@ -30,7 +36,7 @@ export class DatabaseCardComponent implements OnInit {
   constructor( private notify: NotificationService,private http: HttpClient ,private modalService: BsModalService) { }
 
   ngOnInit() {
-    this.http.get<string>('http://localhost:5051/api/Backup/DefaultDBPath').subscribe( Response =>
+    this.http.get<string>('http://localhost:5051/api/Backup/DefaultDBPath', httpOptions).subscribe( Response =>
     this.dbBackProcessInfo.DBPath = Response,
     )
 

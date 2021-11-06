@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DatingApp.API.Models;
+using BackupDB.API.Models;
 
-namespace DatingApp.API.Data
+namespace BackupDB.API.Data
 {
     interface IBackUpRepository
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace DatingApp.API.Models
+namespace BackupDB.API.Models
 {
     public class Photo
     {

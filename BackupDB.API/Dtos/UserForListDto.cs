@@ -1,6 +1,6 @@
 using System;
 
-namespace DatingApp.API.Dtos
+namespace BackupDB.API.Dtos
 {
     public class UserForListDto
     {

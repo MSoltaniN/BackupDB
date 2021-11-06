@@ -1,8 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Database } from 'src/app/_models/database';
 import { Server } from 'src/app/_models/server';
 import { NotificationService } from 'src/app/_services/notification.service';
+import { ServerService } from 'src/app/_services/server.service';
+
 
 @Component({
   selector: 'app-database-list',
@@ -14,7 +16,7 @@ export class DatabaseListComponent implements OnInit {
   databases: Database[] = <Database[]>{};
   @Input() server : Server = <Server>{};
   @Output() emitPassDBIncludeInBackUpEvent : EventEmitter<any> = new EventEmitter();
-  constructor(private http: HttpClient, private notify: NotificationService,) { }
+  constructor(private http: HttpClient, private notify: NotificationService,private serverService :ServerService) { }
 
   ngOnInit() {
     this.http

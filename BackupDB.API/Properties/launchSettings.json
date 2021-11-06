@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "DatingApp.API": {
+    "BackupDB.API": {
       "commandName": "Project",
       "launchBrowser": false,
       "launchUrl": "api/values",

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DatingApp.API.Models
+namespace BackupDB.API.Models
 {
     public class Database
     {

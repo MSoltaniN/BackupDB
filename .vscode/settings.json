@@ -1,0 +1,5 @@
+{
+    "files.exclude": {
+        "**/BackupDB-SPA-old": true
+    }
+}

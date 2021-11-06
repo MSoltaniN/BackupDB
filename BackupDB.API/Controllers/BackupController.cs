@@ -7,13 +7,11 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
-using DatingApp.API.Data;
-using DatingApp.API.Dtos;
+using BackupDB.API.Data;
+using BackupDB.API.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace BackupDB.API.Controllers

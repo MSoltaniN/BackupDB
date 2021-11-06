@@ -3,9 +3,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using DatingApp.API.Data;
-using DatingApp.API.Dtos;
-using DatingApp.API.Models;
+using BackupDB.API.Data;
+using BackupDB.API.Dtos;
+using BackupDB.API.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 using System.DirectoryServices.AccountManagement;
 
-namespace DatingApp.API.Controllers
+namespace BackupDB.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

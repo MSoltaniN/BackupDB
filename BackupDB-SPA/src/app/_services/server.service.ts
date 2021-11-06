@@ -4,29 +4,48 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Database } from '../_models/database';
 import { Server } from '../_models/server';
+import { NotificationService } from './notification.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
-    'Authorization': 'Bearer ' + localStorage.getItem('token')
-  })
+    Authorization: 'Bearer ' + localStorage.getItem('token'),
+  }),
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ServerService {
-  baseUrl = environment.apiUrl;
-  result : any
+  baseUrl = environment.apiUrl + 'api/BackUp/';
+  result: any;
 
-constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private notify: NotificationService) {}
 
-getServers() {
-  this.http.get<Server[]>(this.baseUrl + 'BackUp/servers',httpOptions).subscribe(res => {this.result = res}, error => {  console.log(error) });
-  //console.log(this.result);
-  return this.result;
-}
+  getServers() {
+    this.http.get<Server[]>(this.baseUrl + 'servers', httpOptions).subscribe(
+      (res) => {
+        this.result = res;
+      },
+      (error) => {
+        console.log(error);
+        this.notify.error(error);
+      }
+    );
+    //console.log(this.result);
+    return this.result;
+  }
 
-getDatabases(name : any): Observable<Database[]> {
-  return this.http.get<Database[]>(this.baseUrl + 'BackUp/databases/' + name, httpOptions);
-}
+  // getDatabases(server: Server): Observable<Database[]> {
+  //   return this.http
+  //     .get<Database[]>(this.baseUrl + 'databases' + server, httpOptions)
+  //     .subscribe(
+  //       (res) => {
+  //         this.result = res;
+  //       },
+  //       (error) => {
+  //         console.log(error);
+  //         this.notify.error(error);
+  //       }
+  //     );
+  // }
 }
