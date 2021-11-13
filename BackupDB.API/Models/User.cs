@@ -11,8 +11,7 @@ namespace BackupDB.API.Models
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public string ServerUsername { get; set; }
-        public byte[] ServerPasswordHash { get; set; }
-        public byte[] ServerPasswordSalt { get; set; }
+        public string ServerPassword { get; set; }
         public string Gender { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string KnownAs { get; set; }

@@ -38,16 +38,13 @@ namespace BackupDB.API.Data
             }
         }
 
-        public async Task<User> Register(User user, string password, string serverPassword)
+        public async Task<User> Register(User user, string password)
         {
-            byte[] passwordHash, passwordSalt,serverPasswordHash, serverPasswordSalt;
+            byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
-            CreatePasswordHash(serverPassword , out serverPasswordHash, out serverPasswordSalt);
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
-            user.ServerPasswordHash = serverPasswordHash;
-            user.ServerPasswordSalt = serverPasswordSalt;
 
             await _context.Users.AddAsync(user);
 

@@ -358,7 +358,7 @@ namespace BackupDB.API.Controllers
         private static bool _HostMachineOSIsWin = true;
         private static string _HostMachineIP = "127.0.0.1";
         private static int _HostMachinePort = 22;
-        private static string _HostMachineUser = "m_soltan";
+        private static string _HostMachineUser = "m_soltani";
         private static string _HostMachinePass = "MO#175824$@";
     }
 }

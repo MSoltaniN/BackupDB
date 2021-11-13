@@ -69,10 +69,11 @@ namespace BackupDB.API.Controllers
                 var userToCreate = new User
                 {
                     Username = userForRegisterDto.Username,
-                    ServerUsername = userForRegisterDto.Server_Username
+                    ServerUsername = userForRegisterDto.Server_Username,
+                    ServerPassword = userForRegisterDto.Server_Password
                 };
 
-                var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password, userForRegisterDto.Server_Password);
+                var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
 
                 return StatusCode(201);
             }
