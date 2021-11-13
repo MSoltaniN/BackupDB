@@ -4,6 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Database } from 'src/app/_models/database';
 import { DBBackUpProcessInfo } from 'src/app/_models/dbBackUpProcessInfo';
 import { NotificationService } from 'src/app/_services/notification.service';
+import { environment } from 'src/environments/environment';
 import { PathLocatorComponent } from '../pathLocator/pathLocator.component';
 
 @Component({
@@ -24,7 +25,7 @@ export class BackUpComponent implements OnInit {
 
   ngOnInit() {
     console.log("on init BackUpComponent");
-    this.http.get<string>('http://localhost:5051/api/Backup/DefaultDBPath').subscribe( Response => 
+    this.http.get<string>(environment.apiUrl +'api/Backup/DefaultDBPath').subscribe( Response => 
     this.path = Response );
   }
 

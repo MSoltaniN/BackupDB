@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  myapp:
+    image: myapp
+    build:
+      context: BackupDB-SPA
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 4200:4200
+
+  backupdbapi:
+    image: backupdbapi
+    build:
+      context: .
+      dockerfile: BackupDB.API/Dockerfile
+    ports:
+      - 80:80

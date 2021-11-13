@@ -1,0 +1,3 @@
+echo zip files...
+docker save --output myapp.tar myapp
+docker save --output backupdbapi.tar backupdbapi

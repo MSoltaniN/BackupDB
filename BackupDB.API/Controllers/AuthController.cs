@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 using System.DirectoryServices.AccountManagement;
+using Renci.SshNet;
+using Renci.SshNet.Common;
 
 namespace BackupDB.API.Controllers
 {
@@ -37,22 +39,45 @@ namespace BackupDB.API.Controllers
 
             string domainName = System.Environment.UserDomainName;
             string domainUserName = System.Environment.UserName;
-            PrincipalContext pc = new PrincipalContext(ContextType.Domain, domainName, domainUserName, ContextOptions.SimpleBind.ToString());
-            bool isValid = pc.ValidateCredentials(userForRegisterDto.Server_Username, userForRegisterDto.Server_Password);
+            bool isValid = false;
+            //PrincipalContext pc = new PrincipalContext(ContextType.Domain, domainName, domainUserName, ContextOptions.SimpleBind.ToString());
+            //isValid  = pc.ValidateCredentials( user , pass);
+            using (var sshClient = new SshClient("127.0.0.1", userForRegisterDto.Server_Username, userForRegisterDto.Server_Password))
+            {
+                //Accept Host key
+                sshClient.HostKeyReceived += delegate (object sender, HostKeyEventArgs e)
+                {
+                    e.CanTrust = true;
+                };
+                try
+                {
+                    //Start the connection
+                    sshClient.Connect();
+
+                    sshClient.Disconnect();
+                    isValid = true;
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message == "Permission denied (password)")
+                        isValid = false;
+                }
+            }
 
             if (isValid)
             {
                 var userToCreate = new User
                 {
-                    Username = userForRegisterDto.Username
+                    Username = userForRegisterDto.Username,
+                    ServerUsername = userForRegisterDto.Server_Username
                 };
 
-                var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
+                var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password, userForRegisterDto.Server_Password);
 
                 return StatusCode(201);
             }
             else
-                return BadRequest("Server Creditionals is not valid");
+                return BadRequest("نام کاربری یا کلمه عبور سرور میزبان صحیح نیست");
 
         }
 

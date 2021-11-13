@@ -4,6 +4,7 @@ import { Database } from 'src/app/_models/database';
 import { Server } from 'src/app/_models/server';
 import { NotificationService } from 'src/app/_services/notification.service';
 import { ServerService } from 'src/app/_services/server.service';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -20,7 +21,7 @@ export class DatabaseListComponent implements OnInit {
 
   ngOnInit() {
     this.http
-    .post<Database[]>('http://localhost:5051/api/Backup/DataBases', this.server)
+    .post<Database[]>(environment.apiUrl+'api/Backup/DataBases', this.server)
     .subscribe(
       (response) => {
         this.databasesBackups = response;

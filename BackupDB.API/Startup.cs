@@ -87,7 +87,14 @@ namespace BackupDB.API
             // seeder.SeedUsers();
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseDefaultFiles();// kestrel serve index.html angular file
+            app.UseStaticFiles();// kestrel serve angular files
+            app.UseMvc( routes =>{
+                routes.MapSpaFallbackRoute( //tell to kestrel redirect to the angular static files
+                    name:"spa-fallback",
+                    defaults: new { controller = "Fallback" , action = "Index"}
+                );
+            });
         }
     }
 }

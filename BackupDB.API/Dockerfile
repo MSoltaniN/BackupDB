@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:2.1-focal AS base
 WORKDIR /app
 EXPOSE 80
 
-ENV ASPNETCORE_URLS=http://+:80
+# ENV ASPNETCORE_URLS=http://+:80
 
 FROM mcr.microsoft.com/dotnet/sdk:2.1-focal AS build
 WORKDIR /src
@@ -14,6 +14,9 @@ RUN dotnet build "BackupDB.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "BackupDB.API.csproj" -c Release -o /app/publish
+RUN dotnet ef database update
+RUN mv BackupDBApp.db  /app/publish
+
 
 FROM base AS final
 WORKDIR /app

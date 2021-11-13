@@ -1,26 +1,27 @@
 version: '3.4'
 
 services:
-  myapp:
-    image: myapp
-    build:
-      context: BackupDB-SPA
-      dockerfile: ./Dockerfile
-    environment:
-      NODE_ENV: development
-    ports:
-      - 4200:4200
-      - 9229:9229
-    command: ["node", "--inspect=0.0.0.0:9229", "index.js"]
-
-  backupdbapi:
-    image: backupdbapi
+  ApiServer:
+    image: api-server:latest
     build:
       context: .
       dockerfile: BackupDB.API/Dockerfile
     ports:
       - 80:80
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    volumes:
-      - ~/.vsdbg:/remote_debugger:rw
+    # environment:
+    #   - ASPNETCORE_ENVIRONMENT=Development
+    # volumes:
+    #   - ~/.vsdbg:/remote_debugger:rw
+  WebApp:
+    image: web-app:dev
+    build:
+      context: BackupDB-SPA
+      dockerfile: ./Dockerfile
+    # environment:
+    #   NODE_ENV: development
+    ports:
+      - 4200:4200
+    # - 9229:9229
+    # command: ["node", "--inspect=0.0.0.0:9229", "index.js"]
+
+

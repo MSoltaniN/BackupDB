@@ -14,7 +14,7 @@ namespace BackupDB.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846");
+                .HasAnnotation("ProductVersion", "2.1.14-servicing-32113");
 
             modelBuilder.Entity("BackupDB.API.Models.Photo", b =>
                 {
@@ -66,6 +66,12 @@ namespace BackupDB.API.Migrations
                     b.Property<byte[]>("PasswordHash");
 
                     b.Property<byte[]>("PasswordSalt");
+
+                    b.Property<byte[]>("ServerPasswordHash");
+
+                    b.Property<byte[]>("ServerPasswordSalt");
+
+                    b.Property<string>("ServerUsername");
 
                     b.Property<string>("Username");
 

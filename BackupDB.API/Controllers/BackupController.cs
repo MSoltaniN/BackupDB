@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Renci.SshNet;
+using Renci.SshNet.Common;
 
 namespace BackupDB.API.Controllers
 {
@@ -188,8 +190,49 @@ namespace BackupDB.API.Controllers
                 {
                     backupPath = _configuration.GetSection("ServerBackUpInfo:BackUpPath").Value;
                 }
-                if (!Directory.Exists(backupPath))
-                    Directory.CreateDirectory(backupPath);
+
+                //Set up the SSH connection
+                using (var sshClient = new SshClient(_HostMachineIP, _HostMachineUser, _HostMachinePass))
+                {
+
+                    //Accept Host key
+                    sshClient.HostKeyReceived += delegate (object sender, HostKeyEventArgs e)
+                    {
+                        e.CanTrust = true;
+                    };
+                    try
+                    {
+                        //Start the connection
+                        sshClient.Connect();
+
+                        _sshRes = sshClient.RunCommand("cd " + backupPath);
+                        if (!string.IsNullOrEmpty(_sshRes.Error) && _sshRes.Error.ToLower().Contains("cannot find"))
+                        {
+                            _sshRes = sshClient.RunCommand("mkdir " + backupPath);
+                            if (!string.IsNullOrEmpty(_sshRes.Error) && _sshRes.Error.Contains("Cannot find"))
+                            {
+                                { ErrMsg += "could not create dir!" + _sshRes.Error; continue; }
+                            }
+                        }
+                        else
+                        { ErrMsg += _sshRes.Error; continue; }
+
+                        //sshClient.CreateCommand("pwd").Execute()
+
+                        sshClient.Disconnect();
+                    }
+                    catch (Exception ex)
+                    {
+                        if(ex.Message == "Permission denied (password)")
+                            ErrMsg += "نام کاربری یا کلمه عبور سرور میزبان صحیح نیست";
+                        continue;
+                    }
+
+
+                }
+
+                // if (!Directory.Exists(backupPath))
+                //     Directory.CreateDirectory(backupPath);
 
 
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
@@ -234,13 +277,13 @@ namespace BackupDB.API.Controllers
                     catch (SqlException ex)
                     {
                         if (ex.Errors[0].ToString().ToLower().Contains("login failed"))
-                            ErrMsg +=  ".اطلاعات کاربری برای اتصال به پایگاه داده اشتباه است" + " : " + item.DBName + "\r\n";
+                            ErrMsg += ".اطلاعات کاربری برای اتصال به پایگاه داده اشتباه است" + " : " + item.DBName + "\r\n";
                         else if (ex.Errors[0].ToString().Contains("but then an error occurred during the login process"))
                             ErrMsg += ".اشکالی در ارتباط وجود دارد، لطفا دوباره امتحان کنید" + " : " + item.DBName + "\r\n";
                         else if (ex.Errors[0].ToString().Contains("Access is denied"))
-                            ErrMsg += ".سیستم به پوشه مورد نظر دسترسی ندارد" + " : "  + item.DBName + "\r\n";
+                            ErrMsg += ".سیستم به پوشه مورد نظر دسترسی ندارد" + " : " + item.DBName + "\r\n";
                         else
-                            ErrMsg += ex.Errors[0].ToString() + " : "  + item.DBName + "\r\n";
+                            ErrMsg += ex.Errors[0].ToString() + " : " + item.DBName + "\r\n";
                     }
                 }
             }
@@ -309,6 +352,13 @@ namespace BackupDB.API.Controllers
                 Debug.Print(ex.Message + "----   Error writing app settings");
             }
         }
-
+        private static String _responseErrors;
+        private static Chilkat.Ssh _ssh = new Chilkat.Ssh();
+        private static SshCommand _sshRes;
+        private static bool _HostMachineOSIsWin = true;
+        private static string _HostMachineIP = "127.0.0.1";
+        private static int _HostMachinePort = 22;
+        private static string _HostMachineUser = "m_soltan";
+        private static string _HostMachinePass = "MO#175824$@";
     }
 }
