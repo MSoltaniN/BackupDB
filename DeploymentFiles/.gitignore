@@ -1,0 +1,4 @@
+*.db
+*.tar
+*.exe
+/iis/publish
