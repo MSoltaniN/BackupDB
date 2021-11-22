@@ -22,11 +22,13 @@ namespace BackupDB.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
+        private readonly IBackUpRepository _repoBackup;
         private readonly IConfiguration _config;
-        public AuthController(IAuthRepository repo, IConfiguration config)
+        public AuthController(IAuthRepository repo,IBackUpRepository backupRepo, IConfiguration config)
         {
             _config = config;
             _repo = repo;
+            _repoBackup = backupRepo;
         }
 
         [HttpPost("register")]
@@ -42,7 +44,7 @@ namespace BackupDB.API.Controllers
             bool isValid = false;
             //PrincipalContext pc = new PrincipalContext(ContextType.Domain, domainName, domainUserName, ContextOptions.SimpleBind.ToString());
             //isValid  = pc.ValidateCredentials( user , pass);
-            using (var sshClient = new SshClient("127.0.0.1", userForRegisterDto.Server_Username, userForRegisterDto.Server_Password))
+            using (var sshClient = new SshClient(userForRegisterDto.Server_IP , userForRegisterDto.Server_Username, userForRegisterDto.Server_Password))
             {
                 //Accept Host key
                 sshClient.HostKeyReceived += delegate (object sender, HostKeyEventArgs e)
@@ -69,11 +71,16 @@ namespace BackupDB.API.Controllers
                 var userToCreate = new User
                 {
                     Username = userForRegisterDto.Username,
-                    ServerUsername = userForRegisterDto.Server_Username,
-                    ServerPassword = userForRegisterDto.Server_Password
                 };
-
                 var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
+
+                var Server = new Server
+                {
+                    Username = userForRegisterDto.Server_Username,
+                    Password = userForRegisterDto.Server_Password,
+                    IP = userForRegisterDto.Server_IP
+                };
+                 _repoBackup.Add(Server);
 
                 return StatusCode(201);
             }

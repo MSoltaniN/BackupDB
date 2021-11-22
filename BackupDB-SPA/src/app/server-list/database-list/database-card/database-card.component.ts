@@ -8,6 +8,7 @@ import { Database } from 'src/app/_models/database';
 import { DBBackUpProcessInfo } from 'src/app/_models/dbBackUpProcessInfo';
 import { Server } from 'src/app/_models/server';
 import { NotificationService } from 'src/app/_services/notification.service';
+import { environment } from 'src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -25,18 +26,19 @@ export class DatabaseCardComponent implements OnInit {
   @Input() database: Database = <Database>{};
   @Input() server :Server = <Server>{};
   @Output() emitDBIncludeInBackUpEvent : EventEmitter<any> = new EventEmitter();
-  dbBackProcessInfo : DBBackUpProcessInfo = { serverName: '', DBName:'' , DBPath:''};
+  dbBackProcessInfo : DBBackUpProcessInfo = { serverName: '', DBName:'' , DBPath:'', UserId:''};
   DBInfomodalRef: BsModalRef =<BsModalRef>{};
   checked = false;
 
   
   path :string = this.dbBackProcessInfo.DBPath;
   DBPath_modalRef: BsModalRef =<BsModalRef>{};
+  baseUrl = environment.apiUrl + 'api/BackUp/';
 
   constructor( private notify: NotificationService,private http: HttpClient ,private modalService: BsModalService) { }
 
   ngOnInit() {
-    this.http.get<string>('http://localhost:5051/api/Backup/DefaultDBPath', httpOptions).subscribe( Response =>
+    this.http.get<string>( this.baseUrl + 'DefaultDBPath', httpOptions).subscribe( Response =>
     this.dbBackProcessInfo.DBPath = Response,
     )
 

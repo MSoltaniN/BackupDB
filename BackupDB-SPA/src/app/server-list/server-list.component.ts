@@ -35,7 +35,7 @@ export class ServerListComponent implements OnInit {
     // });
     console.log('in on init of server-list');
     // this.http
-    //   .get<Server[]>('http://localhost:5051/api/BackUp/servers')
+    //   .get<Server[]>('http://localhost:5059/api/BackUp/servers')
     //   .subscribe(
     //     (response) => {
     //       this.servers = response;

@@ -38,6 +38,26 @@ namespace BackupDB.API.Migrations
                     b.ToTable("Photos");
                 });
 
+            modelBuilder.Entity("BackupDB.API.Models.Server", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("IP");
+
+                    b.Property<string>("Password");
+
+                    b.Property<int>("UserId");
+
+                    b.Property<string>("Username");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Servers");
+                });
+
             modelBuilder.Entity("BackupDB.API.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -67,12 +87,6 @@ namespace BackupDB.API.Migrations
 
                     b.Property<byte[]>("PasswordSalt");
 
-                    b.Property<byte[]>("ServerPasswordHash");
-
-                    b.Property<byte[]>("ServerPasswordSalt");
-
-                    b.Property<string>("ServerUsername");
-
                     b.Property<string>("Username");
 
                     b.HasKey("Id");
@@ -96,6 +110,14 @@ namespace BackupDB.API.Migrations
                 {
                     b.HasOne("BackupDB.API.Models.User", "User")
                         .WithMany("Photos")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("BackupDB.API.Models.Server", b =>
+                {
+                    b.HasOne("BackupDB.API.Models.User", "user")
+                        .WithMany("Servers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

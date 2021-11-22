@@ -8,10 +8,13 @@ services:
     build:
       context: .
       dockerfile: BackupDB.API/Dockerfile
-    ports:
-      - 80:80
+    # ports:
+    #   - 9095:9095
     volumes:
       - productdata:/app
+    network_mode: host
+    environment:
+        - ASPNETCORE_URLS=http://localhost:9095
 
   WebApp:
     image: web-app:latest

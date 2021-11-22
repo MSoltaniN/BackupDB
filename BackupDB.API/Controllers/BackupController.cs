@@ -24,6 +24,7 @@ namespace BackupDB.API.Controllers
     public class BackupController : ControllerBase
     {
         private readonly IDatingRepository _repo;
+        private readonly IBackUpRepository _repoBackup;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
@@ -31,9 +32,10 @@ namespace BackupDB.API.Controllers
         //public List<string> localServers { get; set; }
 
 
-        public BackupController(IDatingRepository repo, IMapper mapper, IConfiguration configuration)
+        public BackupController(IDatingRepository repo,IBackUpRepository backupRepo, IMapper mapper, IConfiguration configuration)
         {
             _repo = repo;
+            _repoBackup = backupRepo ;
             _mapper = mapper;
             _configuration = configuration;
         }
@@ -192,9 +194,10 @@ namespace BackupDB.API.Controllers
                 }
 
                 //Set up the SSH connection
-                using (var sshClient = new SshClient(_HostMachineIP, _HostMachineUser, _HostMachinePass))
-                {
+                 var serverInfo = await _repoBackup.GetServerInfo(item.userId);
 
+                using (var sshClient = new SshClient(serverInfo.IP, serverInfo.Username, serverInfo.Password))
+                {
                     //Accept Host key
                     sshClient.HostKeyReceived += delegate (object sender, HostKeyEventArgs e)
                     {
@@ -356,9 +359,6 @@ namespace BackupDB.API.Controllers
         private static Chilkat.Ssh _ssh = new Chilkat.Ssh();
         private static SshCommand _sshRes;
         private static bool _HostMachineOSIsWin = true;
-        private static string _HostMachineIP = "127.0.0.1";
         private static int _HostMachinePort = 22;
-        private static string _HostMachineUser = "m_soltani";
-        private static string _HostMachinePass = "MO#175824$@";
     }
 }

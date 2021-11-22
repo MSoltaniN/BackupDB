@@ -6,8 +6,10 @@ using BackupDB.API.Models;
 
 namespace BackupDB.API.Data
 {
-    interface IBackUpRepository
+    public interface IBackUpRepository
     {
         Task<IEnumerable<Database>> GetDatabases();
+        void Add<T>(T entity) where T : class;
+         Task<Server> GetServerInfo(int userId);
     }
 }

@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackupDB.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20180715095151_ExtendedUserClass")]
-    partial class ExtendedUserClass
+    [Migration("14000901084542_initialCraete")]
+    partial class initialCraete
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846");
+                .HasAnnotation("ProductVersion", "2.1.14-servicing-32113");
 
             modelBuilder.Entity("BackupDB.API.Models.Photo", b =>
                 {
@@ -38,6 +38,26 @@ namespace BackupDB.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Photos");
+                });
+
+            modelBuilder.Entity("BackupDB.API.Models.Server", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("IP");
+
+                    b.Property<string>("Password");
+
+                    b.Property<int>("UserId");
+
+                    b.Property<string>("Username");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Servers");
                 });
 
             modelBuilder.Entity("BackupDB.API.Models.User", b =>
@@ -92,6 +112,14 @@ namespace BackupDB.API.Migrations
                 {
                     b.HasOne("BackupDB.API.Models.User", "User")
                         .WithMany("Photos")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("BackupDB.API.Models.Server", b =>
+                {
+                    b.HasOne("BackupDB.API.Models.User", "user")
+                        .WithMany("Servers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

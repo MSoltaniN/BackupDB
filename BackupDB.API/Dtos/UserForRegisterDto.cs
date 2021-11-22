@@ -16,5 +16,7 @@ namespace BackupDB.API.Dtos
 
         [Required]
         public string Server_Password { get; set; }
+        [Required]
+        public string Server_IP { get; set; }
     }
 }

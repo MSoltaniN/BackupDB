@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Database } from 'src/app/_models/database';
 import { DBBackUpProcessInfo } from 'src/app/_models/dbBackUpProcessInfo';
+import { AuthService } from 'src/app/_services/auth.service';
 import { NotificationService } from 'src/app/_services/notification.service';
 import { environment } from 'src/environments/environment';
 import { PathLocatorComponent } from '../pathLocator/pathLocator.component';
@@ -19,9 +20,9 @@ export class BackUpComponent implements OnInit {
   dbBackProcessInfo : DBBackUpProcessInfo[] = [];
   path :string = '';
   Model: any = {};
-
+  baseUrl = environment.apiUrl + 'api/BackUp/';
   
-  constructor( private notify: NotificationService,private http: HttpClient ,private modalService: BsModalService, public bsModalRef: BsModalRef) { }
+  constructor( private notify: NotificationService,private http: HttpClient ,private modalService: BsModalService, public bsModalRef: BsModalRef, private authService: AuthService) { }
 
   ngOnInit() {
     console.log("on init BackUpComponent");
@@ -58,12 +59,12 @@ export class BackUpComponent implements OnInit {
     console.log("in backup method ");
     console.log( this.path);
     this.databases.forEach(element => {
-      this.dbBackProcessInfo.push({DBName: element.database_name,serverName: element.server_name,DBPath: <string>this.path});
+      this.dbBackProcessInfo.push({DBName: element.database_name,serverName: element.server_name,DBPath: <string>this.path, UserId: this.authService.decodedToken.nameid});
     });
     this.notify.OnStartedBackUp(true);
     this.notify.progress('در حال انجام پشتیبان گیری..');
     console.log( this.dbBackProcessInfo);
-    this.http.post('http://localhost:5051/api/Backup/Process',this.dbBackProcessInfo).subscribe(response => {
+    this.http.post(this.baseUrl + 'Process',this.dbBackProcessInfo).subscribe(response => {
       this.notify.OnCompletedBackUp(true);
       this.notify.success('پشتیبان گیری با موفقیت انجام شد');
     }, error => {
