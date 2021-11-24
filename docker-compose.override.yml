@@ -2,11 +2,12 @@ version: '3.4'
 
 services:
   ApiServer:
-    image: api-server:latest
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:9095
     volumes:
-      - ~/.vsdbg:/remote_debugger:rw
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
   WebApp:
     image: web-app:dev
     # environment:
@@ -15,5 +16,3 @@ services:
       - 4200:4200
     # - 9229:9229
     # command: ["node", "--inspect=0.0.0.0:9229", "index.js"]
-
-

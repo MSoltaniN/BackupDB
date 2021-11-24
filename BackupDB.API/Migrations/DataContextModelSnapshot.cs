@@ -47,7 +47,7 @@ namespace BackupDB.API.Migrations
 
                     b.Property<string>("Password");
 
-                    b.Property<int>("UserId");
+                    b.Property<int?>("UserId");
 
                     b.Property<string>("Username");
 
@@ -87,6 +87,12 @@ namespace BackupDB.API.Migrations
 
                     b.Property<byte[]>("PasswordSalt");
 
+                    b.Property<string>("ServerIP");
+
+                    b.Property<string>("ServerPassword");
+
+                    b.Property<string>("ServerUsername");
+
                     b.Property<string>("Username");
 
                     b.HasKey("Id");
@@ -118,8 +124,7 @@ namespace BackupDB.API.Migrations
                 {
                     b.HasOne("BackupDB.API.Models.User", "user")
                         .WithMany("Servers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

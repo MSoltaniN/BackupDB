@@ -13,7 +13,7 @@
     <p class="card-title text-center mb-1"><i class="fa fa-hdd-o"></i>
       {{database.database_name}}  
     </p>
-    <p class="card-text text-muted text-center"> تاریخ آخرین پشتیبان گیری  {{database.backup_finish_date | jalili }}</p>
+    <p *ngIf="backupExist" class="card-text text-muted text-center"> تاریخ آخرین پشتیبان گیری  {{database.backup_finish_date | jalili }}</p>
   </div>
 </div>
 

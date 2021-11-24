@@ -71,16 +71,21 @@ namespace BackupDB.API.Controllers
                 var userToCreate = new User
                 {
                     Username = userForRegisterDto.Username,
+
+                    ServerUsername = userForRegisterDto.Server_Username,
+                    ServerPassword = userForRegisterDto.Server_Password,
+                    ServerIP = userForRegisterDto.Server_IP
                 };
                 var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
-
-                var Server = new Server
-                {
-                    Username = userForRegisterDto.Server_Username,
-                    Password = userForRegisterDto.Server_Password,
-                    IP = userForRegisterDto.Server_IP
-                };
-                 _repoBackup.Add(Server);
+        
+                // var Server = new Server
+                // {
+                //     Username = userForRegisterDto.Server_Username,
+                //     Password = userForRegisterDto.Server_Password,
+                //     IP = userForRegisterDto.Server_IP,
+                //     UserId = createdUser.Id
+                // };
+                // var createdServer = await _repoBackup.Add(Server);
 
                 return StatusCode(201);
             }

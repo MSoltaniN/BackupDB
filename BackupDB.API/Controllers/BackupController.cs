@@ -151,6 +151,24 @@ namespace BackupDB.API.Controllers
                             --ORDER BY  
                            -- msdb.dbo.backupset.database_name,   
                             --msdb.dbo.backupset.backup_finish_date
+                             UNION ALL
+                             SELECT 
+                              1,
+                              name,
+                              '',
+                              '',
+                              '',
+                              '',
+                              0,
+                              NULL,
+                              '',
+                               '',
+                              '',
+                              0,
+                              REPLACE ( CONVERT(CHAR(100), SERVERPROPERTY('Servername')),' ','') AS Server
+                              FROM  sys.databases 
+                                  WHERE name NOT IN (SELECT database_name FROM  msdb.dbo.backupset)
+                                      AND owner_sid<>0x01
                              ";
 
                     using (SqlCommand command = new SqlCommand(sql, connection))
@@ -194,9 +212,10 @@ namespace BackupDB.API.Controllers
                 }
 
                 //Set up the SSH connection
-                 var serverInfo = await _repoBackup.GetServerInfo(item.userId);
+                 //var serverInfo = await _repoBackup.GetServerInfo(item.userId);
+                 var userInfo = await _repo.GetUser(item.userId);
 
-                using (var sshClient = new SshClient(serverInfo.IP, serverInfo.Username, serverInfo.Password))
+                using (var sshClient = new SshClient(userInfo.ServerIP, userInfo.ServerUsername, userInfo.ServerPassword))
                 {
                     //Accept Host key
                     sshClient.HostKeyReceived += delegate (object sender, HostKeyEventArgs e)

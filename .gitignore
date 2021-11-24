@@ -1,0 +1,18 @@
+﻿# Ignore conventional output paths for libraries and tests
+bin/
+testbin/
+obj/
+
+# Ignore conventional Nuget package source
+lib/
+
+# Ignore generated files
+.vs/
+
+# Ignore this to enable developer-specific connection string for API service
+BackupDB.API/**/appsettings.Development.json
+
+# Ignore all uploaded files
+
+
+# Ignore instance-specific files

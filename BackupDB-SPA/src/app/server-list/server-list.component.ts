@@ -47,6 +47,7 @@ export class ServerListComponent implements OnInit {
     //   );
     
       this.servers = this.serverService.getServers()
+      console.log(this.servers);
   }
 
   log(event: boolean, server: Server) {

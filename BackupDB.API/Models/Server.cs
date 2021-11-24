@@ -7,6 +7,6 @@ namespace BackupDB.API.Models
         public string Password { get; set; }
         public string IP { get; set; }
         public User user { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
     }
 }

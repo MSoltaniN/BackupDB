@@ -20,6 +20,10 @@ namespace BackupDB.API.Models
         public string Interests { get; set; }
         public string City { get; set; }
         public string Country { get; set; }
+        public string ServerUsername { get; set; }
+        public string ServerPassword { get; set; }
+        public string ServerIP { get; set; }
+
         public ICollection<Photo> Photos { get; set; }
         public ICollection<Server> Servers { get; set; }
     }

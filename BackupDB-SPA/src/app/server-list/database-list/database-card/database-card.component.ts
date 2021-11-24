@@ -29,6 +29,7 @@ export class DatabaseCardComponent implements OnInit {
   dbBackProcessInfo : DBBackUpProcessInfo = { serverName: '', DBName:'' , DBPath:'', UserId:''};
   DBInfomodalRef: BsModalRef =<BsModalRef>{};
   checked = false;
+  backupExist = false;
 
   
   path :string = this.dbBackProcessInfo.DBPath;
@@ -43,6 +44,8 @@ export class DatabaseCardComponent implements OnInit {
     )
 
     this.databasesBackups = this.databasesBackups.filter(x => x.database_name == this.database.database_name);
+    if(!this.database.backup_start_date.toString().includes("1900"))
+      this.backupExist=true;
   }
 
   openModal(template: TemplateRef<any>) {

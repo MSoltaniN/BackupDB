@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BackupDB.API.Migrations
 {
-    public partial class initialCraete : Migration
+    public partial class initialDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -25,7 +25,10 @@ namespace BackupDB.API.Migrations
                     LookingFor = table.Column<string>(nullable: true),
                     Interests = table.Column<string>(nullable: true),
                     City = table.Column<string>(nullable: true),
-                    Country = table.Column<string>(nullable: true)
+                    Country = table.Column<string>(nullable: true),
+                    ServerUsername = table.Column<string>(nullable: true),
+                    ServerPassword = table.Column<string>(nullable: true),
+                    ServerIP = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -77,7 +80,7 @@ namespace BackupDB.API.Migrations
                     Username = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true),
                     IP = table.Column<string>(nullable: true),
-                    UserId = table.Column<int>(nullable: false)
+                    UserId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -87,7 +90,7 @@ namespace BackupDB.API.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

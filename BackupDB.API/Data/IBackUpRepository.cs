@@ -9,7 +9,7 @@ namespace BackupDB.API.Data
     public interface IBackUpRepository
     {
         Task<IEnumerable<Database>> GetDatabases();
-        void Add<T>(T entity) where T : class;
+        Task<Server> Add(Server server);
          Task<Server> GetServerInfo(int userId);
     }
 }

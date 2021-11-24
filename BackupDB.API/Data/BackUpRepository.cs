@@ -15,14 +15,16 @@ namespace BackupDB.API.Data
             throw new NotImplementedException();
         }
 
-        public void Add<T>(T entity) where T : class
+        public async Task<Server> Add(Server server)
         {
-            _context.Add(entity);
+            await _context.Servers.AddAsync(server);
+            await _context.SaveChangesAsync();
+            return server;
         }
 
         public Task<Server> GetServerInfo(int userId)
         {
-           return  _context.Servers.FirstOrDefaultAsync(u => u.UserId == userId);
+            return _context.Servers.FirstOrDefaultAsync(u => u.UserId == userId);
         }
     }
 }
