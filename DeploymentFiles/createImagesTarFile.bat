@@ -1,3 +1,3 @@
 echo zip files...
-docker save --output myapp.tar myapp
-docker save --output backupdbapi.tar backupdbapi
+docker save --output web-app.tar  web-app:latest
+docker save --output api-server.tar api-server:latest

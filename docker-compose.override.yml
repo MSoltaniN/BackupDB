@@ -9,7 +9,6 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
   WebApp:
-    image: web-app:dev
     # environment:
     #    NODE_ENV: development
     ports:

@@ -4,7 +4,7 @@ volumes:
 
 services:
   ApiServer:
-    image: api-server
+    image: api-server:latest
     build:
       context: .
       dockerfile: BackupDB.API/Dockerfile

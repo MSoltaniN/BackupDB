@@ -1,6 +1,4 @@
 echo unzip docker images ... 
-docker load --input myapp.tar
-docker load --input backupdbapi.tar
+docker load --input web-app.tar
+docker load --input api-server.tar
 
-echo running docker images ... 
-docker-compose -f  docker-compose.yml -f docker-compose.debug.yml up --no-build
