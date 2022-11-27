@@ -236,8 +236,8 @@ namespace BackupDB.API.Controllers
                                 { ErrMsg += "could not create dir!" + _sshRes.Error; continue; }
                             }
                         }
-                        else
-                        { ErrMsg += _sshRes.Error; continue; }
+                       // else
+                        //{ ErrMsg += _sshRes.Error; continue; }
 
                         //sshClient.CreateCommand("pwd").Execute()
 
